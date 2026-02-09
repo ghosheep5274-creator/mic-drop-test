@@ -64,6 +64,7 @@ const songData = [
     { "time": 120296, "text": "(ah)", "type": "chant" },
     { "time": 124515, "text": "쌔 쌤통", "type": "chant" },
     { "time": 127109, "text": "행복", "type": "chant" },
+    { "time": 128535, "text": "scream!", "type": "scream" },
     { "time": 138443, "text": "MIC Drop baam", "type": "chant" },
     { "time": 140871, "text": "(bag)-①", "type": "chant" },
     { "time": 142260, "text": "(bag)-②", "type": "chant" },
@@ -74,14 +75,17 @@ const songData = [
     { "time": 153217, "text": "(성공)", "type": "chant" },
     { "time": 156041, "text": "(봉송)", "type": "chant" },
     { "time": 158867, "text": "(숑숑)", "type": "chant" },
+    { "time": 160293, "text": "scream!", "type": "scream" },
     { "time": 167914, "text": "MIC Drop-①", "type": "chant" },
     { "time": 169372, "text": "MIC Drop-②", "type": "chant" },
     { "time": 170987, "text": "발 발", "type": "chant" },
     { "time": 172251, "text": "말 말", "type": "chant" },
+    { "time": 173677, "text": "scream!", "type": "scream" },
     { "time": 179255, "text": "MIC Drop-①", "type": "chant" },
     { "time": 180651, "text": "MIC Drop-②", "type": "chant" },
     { "time": 182186, "text": "발 발", "type": "chant" },
     { "time": 183587, "text": "말 말", "type": "chant" },
+    { "time": 184387, "text": "scream!", "type": "scream" },
     { "time": 199552, "text": "마지막 인사야", "type": "sing" },
     { "time": 205079, "text": "사과도 하지 마", "type": "sing" },
     { "time": 210780, "text": "마지막 인사야", "type": "sing" },
@@ -94,8 +98,10 @@ const songData = [
     { "time": 225232, "text": "막", "type": "sing" },
     { "time": 227345, "text": "폼나지-①", "type": "sing" },
     { "time": 228786, "text": "폼나지-②", "type": "sing" },
+    { "time": 230212 "text": "scream!", "type": "scream" },
 
 
     // --- 🏆 結業證書觸發 ---
     { "time": 239000, "text": "", "type": "end" }
+
 ];
