@@ -31,18 +31,25 @@ function adjustTime(ms) {
 }
 
 function updateLoop() {
-    if (!isPlaying) return;
+    if (!isPlaying) return; 
 
     currentTime = Date.now() - startTime + offset;
     renderSyncTimer(currentTime);
 
-    // 尋找當前歌詞 (依賴 mic_drop.js 裡的 songData)
-    // 這裡使用簡單邏輯：找到最後一個「時間到了」的詞
     const currentLyric = songData.reduce((prev, curr) => {
         return (curr.time <= currentTime) ? curr : prev;
     }, songData[0]);
 
-    if (currentLyric) render(currentLyric);
+    if (currentLyric) {
+        // 如果偵測到結束，先 render 證書，然後立刻停掉 loop
+        if (currentLyric.type === 'end') {
+            render(currentLyric); 
+            isPlaying = false; // 這裡停掉，下面就不會再跑了
+            cancelAnimationFrame(animationFrameId);
+            return; 
+        }
+        render(currentLyric);
+    }
 
     animationFrameId = requestAnimationFrame(updateLoop);
 }
@@ -94,6 +101,21 @@ function render(lyricObj) {
         
         lastRenderedText = lyricObj.text;
     }
+    
+    // --- 🆕 新增：處理任務結束 (封測證書) ---
+    if (lyricObj.type === 'end') {
+        // 顯示證書
+        const cert = document.getElementById('beta-cert-overlay');
+        if (cert.style.display === 'none') {
+            cert.style.display = 'flex';
+            // 慶祝震動 (長震兩次)
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        }
+        return; // 結束渲染
+    }
+
+  
+
 }
 // app.js 最下面加入
 
@@ -113,3 +135,26 @@ document.getElementById('help-modal').addEventListener('click', (e) => {
         toggleHelp(false);
     }
 });
+
+function closeCertificate() {
+    // 1. 隱藏證書遮罩
+    document.getElementById('beta-cert-overlay').style.display = 'none';
+    
+    // 2. 停止播放狀態
+    isPlaying = false;
+    
+    // 3. 重置所有數值（這樣下次玩才不會卡住）
+    currentTime = 0;
+    offset = 0;
+    lastRenderedText = ""; 
+    
+    // 4. 停止計時動畫
+    cancelAnimationFrame(animationFrameId);
+    
+    // 5. 切換畫面：隱藏播放頁，顯示啟動頁
+    document.getElementById('play-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'flex';
+    
+    // 6. 震動回饋（代表成功回到總部）
+    if (navigator.vibrate) navigator.vibrate(50);
+}
