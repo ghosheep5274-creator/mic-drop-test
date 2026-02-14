@@ -1,4 +1,5 @@
-// app.js - Project Borahae 最終融合完全體 (特效與毫秒計時全數回歸)
+// app.js - Project Borahae 最終修正版 (2026.02.14)
+// 特性：修復「回首頁自動重播」Bug + 完整視覺特效 + 防呆機制
 
 let player;
 let isVideoReady = false;
@@ -7,16 +8,14 @@ let animationFrameId;
 let offset = 0; 
 let lastRenderedText = "";
 
-// 介面元素
+// [介面元素抓取]
 const startScreen = document.getElementById('start-screen');
 const playScreen = document.getElementById('play-screen');
 const lyricBox = document.getElementById('lyric-box');
 const syncTimer = document.getElementById('sync-timer');
 const btnStart = document.getElementById('btn-start');
 
-/**
- * [區域 A] YouTube API 初始化
- */
+// [區域 A] YouTube API 初始化
 function onYouTubeIframeAPIReady() {
     console.log("Loading YouTube API...");
     player = new YT.Player('player', {
@@ -40,10 +39,17 @@ function onYouTubeIframeAPIReady() {
     });
 }
 
-/**
- * [區域 B] 監聽播放狀態
- */
+// [區域 B] 狀態監聽 (新增：防偷跑機制)
 function onPlayerStateChange(event) {
+    // 🔴 防偷跑：如果在首頁 (startScreen 顯示中)，禁止播放
+    if (startScreen && startScreen.style.display !== 'none') {
+        if (event.data === YT.PlayerState.PLAYING) {
+            player.stopVideo(); // 強制停止
+            console.log("Blocked auto-play on start screen");
+        }
+        return;
+    }
+
     if (event.data === YT.PlayerState.PLAYING) {
         isPlaying = true;
         updateLoop();
@@ -57,9 +63,7 @@ function onPlayerStateChange(event) {
     }
 }
 
-/**
- * [區域 C] 啟動邏輯
- */
+// [區域 C] 啟動邏輯
 if (btnStart) {
     btnStart.addEventListener('click', () => {
         if (!isVideoReady || !player) {
@@ -67,7 +71,6 @@ if (btnStart) {
             return;
         }
 
-        // 嘗試全螢幕
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch(e => console.log(e));
         }
@@ -84,9 +87,7 @@ function adjustTime(ms) {
     if (navigator.vibrate) navigator.vibrate(20);
 }
 
-/**
- * [區域 D] 核心循環
- */
+// [區域 D] 核心循環
 function updateLoop() {
     if (!isPlaying || !player || typeof songData === 'undefined') return; 
     
@@ -117,23 +118,7 @@ function updateLoop() {
     animationFrameId = requestAnimationFrame(updateLoop);
 }
 
-/**
- * [區域 E] 毫秒計時器 (原汁原味還原)
- */
-function renderSyncTimer(ms) {
-    if (ms < 0) ms = 0;
-    let totalSec = Math.floor(ms / 1000);
-    let min = Math.floor(totalSec / 60);
-    let sec = totalSec % 60;
-    let deci = Math.floor((ms % 1000) / 100);
-    if (syncTimer) {
-        syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
-    }
-}
-
-/**
- * [區域 F] 渲染邏輯 (特效完全還原)
- */
+// [區域 E] 渲染邏輯 (特效版)
 function render(lyricObj) {
     if (!lyricBox) return;
 
@@ -150,13 +135,14 @@ function render(lyricObj) {
         document.body.classList.remove('warning-mode');
     }
 
-    // 2. 一般歌詞渲染
+    // 2. 一般歌詞 (含 Sing/Scream/Icon)
     if (lastRenderedText !== lyricObj.text) {
         lyricBox.innerText = lyricObj.text;
         lyricBox.className = ""; 
-        void lyricBox.offsetWidth; // 強制重繪
+        void lyricBox.offsetWidth; 
         
         lyricBox.classList.add('active');
+        
         if (lyricObj.type === 'chant') {
             lyricBox.classList.add('type-chant');
             if (navigator.vibrate) navigator.vibrate(50);
@@ -173,18 +159,23 @@ function render(lyricObj) {
     }
 }
 
-/**
- * [區域 G] 說明視窗與關閉邏輯
- */
+// [區域 F] 輔助功能
+function renderSyncTimer(ms) {
+    if (!syncTimer) return;
+    if (ms < 0) ms = 0;
+    
+    let totalSec = Math.floor(ms / 1000);
+    let min = Math.floor(totalSec / 60);
+    let sec = totalSec % 60;
+    let deci = Math.floor((ms % 1000) / 100); 
+    
+    syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
+}
+
 function showCertificate() {
     const cert = document.getElementById('beta-cert-overlay');
     if (cert) cert.style.display = 'flex';
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-}
-
-function toggleHelp(show) {
-    const modal = document.getElementById('help-modal');
-    if (modal) modal.style.display = show ? 'flex' : 'none';
 }
 
 const helpModal = document.getElementById('help-modal');
@@ -194,13 +185,18 @@ if (helpModal) {
     });
 }
 
+function toggleHelp(show) {
+    if (helpModal) helpModal.style.display = show ? 'flex' : 'none';
+}
+
+// 🔴 這裡修復了：移除 seekTo(0)，防止自動重播
 function closeCertificate() {
     const cert = document.getElementById('beta-cert-overlay');
     if (cert) cert.style.display = 'none';
     
-    if (player) {
-        player.stopVideo();
-        player.seekTo(0);
+    // 只做 stopVideo，它會自動歸零且進入停止狀態
+    if (player && typeof player.stopVideo === 'function') {
+        player.stopVideo(); 
     }
     
     isPlaying = false;
