@@ -304,16 +304,27 @@ function showCertificate() {
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
 }
 
+// 1. 綁定說明視窗的關閉點擊 (點背景關閉)
 const helpModal = document.getElementById('help-modal');
 if (helpModal) {
     helpModal.addEventListener('click', (e) => {
-        if (e.target.id === 'help-modal') toggleHelp(false);
+        // 只有點擊黑色背景時才關閉，點擊卡片本身不關閉
+        if (e.target.id === 'help-modal') window.toggleHelp(false);
     });
 }
 
-function toggleHelp(show) {
-    if (helpModal) helpModal.style.display = show ? 'flex' : 'none';
-}
+// 2. 🔴 關鍵修復：強制掛載到 window，讓 HTML 按鈕能呼叫
+window.toggleHelp = function(show) {
+    const modal = document.getElementById('help-modal');
+    if (modal) {
+        modal.style.display = show ? 'flex' : 'none';
+        
+        // 加一點動畫效果
+        if (show && navigator.vibrate) navigator.vibrate(20);
+    } else {
+        console.error("找不到 help-modal 元素，請檢查 index.html");
+    }
+};
 
 function closeCertificate() {
     const cert = document.getElementById('beta-cert-overlay');
@@ -335,5 +346,6 @@ function closeCertificate() {
     
     if (navigator.vibrate) navigator.vibrate(50);
 }
+
 
 
