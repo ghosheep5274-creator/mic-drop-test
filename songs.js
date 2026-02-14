@@ -6,10 +6,10 @@ const songLibrary = {
         bpm: 170,
         file: "lyrics/mic_drop.json" // 指向檔案
     },
-    "dna": {
-        title: "🧬 DNA",
-        videoId: "MBdVXkSdhwU",
-        bpm: 130,
-        file: "lyrics/dna.json"
-    }
+   // "dna": {
+   //     title: "🧬 DNA",
+   //     videoId: "MBdVXkSdhwU",
+   //     bpm: 130,
+   //     file: "lyrics/dna.json"
+   // }
 };
