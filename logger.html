@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Borahae Logger - 手工對拍最終版</title>
+    <style>
+        :root { --main-purple: #a020f0; --bg-dark: #121212; --panel-bg: #1e1e1e; }
+        body { background: var(--bg-dark); color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+        .left-panel { position: sticky; top: 20px; height: fit-content; }
+        .card { background: var(--panel-bg); padding: 20px; border-radius: 16px; border: 1px solid #333; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        h2 { color: var(--main-purple); margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input[type="text"] { background: #2d2d2d; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; flex: 1; outline: none; }
+        #player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #333; }
+        .timer-display { font-size: 24px; font-family: monospace; color: var(--main-purple); margin: 15px 0; text-align: center; background: #000; padding: 10px; border-radius: 8px; }
+        .right-panel { background: var(--panel-bg); padding: 20px; border-radius: 16px; height: 90vh; overflow-y: auto; border: 1px solid #333; }
+        .log-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #333; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+        .log-item span { font-family: monospace; color: #bbb; width: 65px; font-size: 14px; }
+        .log-item input { flex: 1; background: transparent; border: none; border-bottom: 1px solid #444; color: white; padding: 5px; }
+        .log-item input:focus { border-bottom-color: var(--main-purple); outline: none; }
+        button { background: var(--main-purple); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #bc4df5; }
+        .hotkey-hint { font-size: 12px; color: #777; line-height: 1.6; margin-top: 10px; }
+        mark { background: #444; color: #ddd; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left-panel">
+        <div class="card">
+            <h2>💜 Borahae Logger v1.2</h2>
+            <div class="input-group">
+                <input type="text" id="yt-url" placeholder="輸入 YouTube 影片 ID (例如: wWxK5eLFw24)">
+                <button onclick="loadVideo()">載入影片</button>
+            </div>
+            <div id="player-container"><div id="player"></div></div>
+            <div class="timer-display">影片進度：<span id="current-sec">0.000</span> s</div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="applyGlobalOffset(-0.1)" style="background:#444;">全部提前 0.1s</button>
+                <button onclick="applyGlobalOffset(0.1)" style="background:#444;">全部延後 0.1s</button>
+            </div>
+            
+            <div class="hotkey-hint">
+                💡 <b>手工對拍秘訣：</b><br>
+                1. 廣告播完後按下播放。<br>
+                2. 聽到應援點按 <mark>Space</mark>：自動抓點、<b>自動排序</b>、自動 Focus。<br>
+                3. 按下 <mark>Esc</mark>：切換影片 暫停/播放。<br>
+                4. 系統會<b>自動儲存</b>進度至瀏覽器，不用怕關掉網頁。
+            </div>
+        </div>
+
+        <div class="card">
+            <button onclick="exportJSON()" style="width: 100%; padding: 15px;">🚀 生成 JSON 並複製</button>
+            <textarea id="json-output" style="width:100%; height:80px; margin-top:10px; background:#000; color:#0f0; font-family:monospace; font-size:11px;" readonly></textarea>
+            <button onclick="clearLogs()" style="background:#333; width:100%; margin-top:10px; font-size:11px;">清空所有紀錄 (慎用)</button>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <h3 style="margin-top:0; color:var(--main-purple); border-bottom: 2px solid var(--main-purple); padding-bottom: 10px;">手工對拍清單</h3>
+        <div id="log-list"></div>
+    </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    let player;
+    let logs = [];
+    const reactionDelay = 0.2; // 社長設定的反應補償
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '100%', width: '100%', videoId: 'wWxK5eLFw24',
+            playerVars: { 'autoplay': 0, 'controls': 1 },
+            events: { 'onReady': loadFromLocal } // 載入時讀取舊進度
+        });
+        setInterval(() => {
+            if (player && player.getCurrentTime) {
+                document.getElementById('current-sec').innerText = player.getCurrentTime().toFixed(3);
+            }
+        }, 30);
+    }
+
+    function loadVideo() {
+        const vid = document.getElementById('yt-url').value;
+        if(vid) player.loadVideoById(vid);
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            const state = player.getPlayerState();
+            if (state === 1) { e.preventDefault(); captureTime(); }
+        }
+        if (e.code === 'Escape') {
+            const state = player.getPlayerState();
+            state === 1 ? player.pauseVideo() : player.playVideo();
+        }
+    });
+
+    function captureTime() {
+        const rawTime = player.getCurrentTime();
+        const adjustedTime = Math.max(0, rawTime - reactionDelay).toFixed(3);
+        const newId = Date.now();
+        
+        logs.push({ id: newId, time: parseFloat(adjustedTime), text: "", type: "Chant" });
+        logs.sort((a, b) => a.time - b.time);
+        
+        renderLogs();
+        saveToLocal(); // 每次按 Space 就存檔
+
+        setTimeout(() => {
+            const targetInput = document.querySelector(`[data-id="${newId}"] input`);
+            if (targetInput) {
+                targetInput.focus();
+                targetInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 50);
+    }
+
+    function renderLogs() {
+        const list = document.getElementById('log-list');
+        list.innerHTML = logs.map((log) => `
+            <div class="log-item" data-id="${log.id}">
+                <span>${log.time.toFixed(3)}s</span>
+                <input type="text" value="${log.text}" oninput="updateLogText(${log.id}, this.value)" placeholder="輸入應援詞...">
+                <button class="btn-del" onclick="removeLog(${log.id})" style="background:none; border:none; color:#555; cursor:pointer;">✕</button>
+            </div>
+        `).join('');
+    }
+
+    function updateLogText(id, val) {
+        const item = logs.find(l => l.id === id);
+        if (item) item.text = val;
+        saveToLocal(); // 打字也自動存檔
+    }
+
+    function removeLog(id) {
+        logs = logs.filter(l => l.id !== id);
+        renderLogs();
+        saveToLocal();
+    }
+
+    function saveToLocal() {
+        localStorage.setItem('borahae_draft', JSON.stringify(logs));
+    }
+
+    function loadFromLocal() {
+        const draft = localStorage.getItem('borahae_draft');
+        if (draft) {
+            logs = JSON.parse(draft);
+            renderLogs();
+        }
+    }
+
+    function applyGlobalOffset(seconds) {
+        logs = logs.map(log => ({ ...log, time: Math.max(0, parseFloat((log.time + seconds).toFixed(3))) }));
+        logs.sort((a, b) => a.time - b.time);
+        renderLogs();
+        saveToLocal();
+    }
+
+    function exportJSON() {
+        const exportData = logs.map(({time, text, type}) => ({time, text, type}));
+        document.getElementById('json-output').value = JSON.stringify(exportData, null, 2);
+    }
+
+    function clearLogs() {
+        if(confirm("確定要清空嗎？這會刪除瀏覽器內存儲的所有當前進度！")) {
+            logs = [];
+            localStorage.removeItem('borahae_draft');
+            renderLogs();
+            document.getElementById('json-output').value = "";
+        }
+    }
+</script>
+</body>
+</html>
