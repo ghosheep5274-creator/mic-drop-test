@@ -294,4 +294,28 @@ body.warning-mode {
     cursor: pointer;
 }
 
+
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+
+/* style.css 最下方加入 */
+
+/* 校正提示框 (Toast) */
+.toast {
+    position: fixed;
+    bottom: 90px; /* 在按鈕上方 */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(171, 70, 210, 0.9); /* 紫色背景 */
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 999;
+    pointer-events: none; /* 讓點擊穿透 */
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.toast.show { opacity: 1; }
