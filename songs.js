@@ -2,7 +2,7 @@
 const songLibrary = {
     "mic_drop": {
         title: "🎤 MIC Drop",
-        videoId: "e95-Gaj2iXM",
+        videoId: "Zos_33vzX0w",
         bpm: 85,
         file: "lyrics/mic_drop.json" // 指向檔案
     },
