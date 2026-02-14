@@ -25,35 +25,15 @@ const modeText = document.getElementById('mode-text');
 const btnPause = document.getElementById('btn-pause');
 const songSelect = document.getElementById('song-select');
 
-// [區域 B] YouTube API 初始化 - 改為預載模式
-function onYouTubeIframeAPIReady() {
-    // 取得當前選單選中的 ID
-    const initialKey = document.getElementById('song-select').value;
-    const initialVideoId = songLibrary[initialKey].videoId;
-
-    player = new YT.Player('player', {
-        height: '160', // 給它一點實際尺寸，騙過瀏覽器的節能偵測
-        width: '280',
-        videoId: initialVideoId, 
-        playerVars: { 
-            'autoplay': 0, 
-            'controls': 0, 
-            'disablekb': 1, 
-            'playsinline': 1, 
-            'rel': 0,
-            'origin': window.location.origin // 增加安全性，加快連線驗證
-        },
-        events: {
-            'onReady': (event) => { 
-                isVideoReady = true; 
-                console.log("YouTube Ready & Pre-buffered");
-                // 預載第一首歌，但不播放
-                event.target.cueVideoById(initialVideoId);
-            },
-            'onStateChange': onPlayerStateChange
-        }
+// [區域 B] 模式切換監聽
+if (musicToggle) {
+    musicToggle.addEventListener('change', (e) => {
+        useYoutubeMode = e.target.checked;
+        modeText.innerText = useYoutubeMode ? "🎵 音樂模式 (需網路)" : "🔕 離線模式 (純文字)";
+        modeText.style.color = useYoutubeMode ? "#AB46D2" : "#aaa";
     });
 }
+
 // [區域 C] YouTube API 初始化
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
@@ -114,37 +94,31 @@ if (btnStart) {
 
 async function loadSong(songKey) {
     const song = songLibrary[songKey];
-    if (!song) return false;
-
-    currentSongId = songKey;
-
-    // 先啟動歌詞 Fetch (非同步並行)
-    const fetchPromise = fetch(song.file).then(res => res.json());
-
-    // 處理 YouTube：如果 ID 沒變，就不需要 loadVideoById
-    if (player && isVideoReady) {
-        const currentUrl = player.getVideoUrl() || "";
-        if (!currentUrl.includes(song.videoId)) {
-            player.loadVideoById(song.videoId); // 只有不同首歌才重新載入
-        } else {
-            player.seekTo(0); // 同一首歌就回原點就好，這樣超快！
-        }
-    }
-
-    try {
-        currentSongData = await fetchPromise;
-        
-        // 設定 BPM
-        const heart = document.getElementById('metronome-icon');
-        if (heart && song.bpm) {
-            heart.style.animationDuration = (60 / song.bpm) + "s";
-        }
-        return true;
-    } catch (e) {
-        alert("載入失敗");
+    if (!song) {
+        alert("找不到歌曲資料：" + songKey);
         return false;
     }
+    currentSongId = songKey;
+    try {
+        const response = await fetch(song.file);
+        if (!response.ok) throw new Error("Fetch failed");
+        currentSongData = await response.json();
+    } catch (e) {
+        alert("歌詞讀取失敗，請確認資料夾中是否有 " + song.file);
+        return false;
+    }
+    if (player && typeof player.loadVideoById === 'function') {
+        player.loadVideoById(song.videoId);
+    }
+    const heart = document.getElementById('metronome-icon');
+    if (heart && song.bpm) {
+        const duration = (60 / song.bpm) + "s";
+        heart.style.animationDuration = duration;
+        console.log(`BPM set to ${song.bpm}, duration: ${duration}`);
+    }
+    return true;
 }
+
 function enterPlayScreen() {
     if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(e => console.log(e));
@@ -302,6 +276,3 @@ function renderSyncTimer(ms) {
     let deci = Math.floor((ms % 1000) / 100); 
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
-
-
-
