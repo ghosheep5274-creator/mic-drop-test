@@ -11,10 +11,13 @@
         #progress-bar { width: 0%; height: 100%; background: #AB46D2; transition: width 0.3s; }
         .song-list { text-align: left; max-width: 400px; margin: 0 auto; }
         .song-item { padding: 10px; border-bottom: 1px solid #333; display: flex; align-items: center; }
+        /* 讓被禁用的 checkbox 看起來暗一點 */
+        .song-item input:disabled { opacity: 0.6; cursor: not-allowed; }
         .song-item input { margin-right: 15px; transform: scale(1.5); accent-color: #AB46D2; }
         #btn-cert { background: #444; color: #888; border: none; padding: 15px; border-radius: 50px; width: 100%; margin-top: 20px; font-size: 18px; }
         #btn-cert.unlocked { background: linear-gradient(45deg, #AB46D2, #5a189a); color: white; cursor: pointer; box-shadow: 0 0 20px #AB46D2; }
-        /* 證書樣式 (省略部分CSS，參考之前的對話) */
+        
+        /* 證書樣式 */
         #certificate-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); flex-direction: column; justify-content: center; align-items: center; z-index: 999; }
         #cert-card { background: #000; border: 4px solid #AB46D2; padding: 20px; border-radius: 15px; width: 80%; text-align: center; }
         .close-btn { margin-top: 20px; background: transparent; border: 1px solid #fff; color: white; padding: 5px 20px; border-radius: 20px; }
@@ -30,9 +33,10 @@
     <div id="progress-text">0 / 42</div>
 
     <div class="song-list">
-        <label class="song-item"><input type="checkbox" id="song-1"> 1. Mic Drop</label>
-        <label class="song-item"><input type="checkbox" id="song-2"> 2. DNA</label>
-        </div>
+        <label class="song-item"><input type="checkbox" id="song-1" disabled> 1. Mic Drop</label>
+        
+        <label class="song-item"><input type="checkbox" id="song-2"> 2. DNA (自主練習)</label>
+    </div>
 
     <button id="btn-cert" disabled>🔒 領取證書</button>
 
@@ -49,93 +53,88 @@
         <button class="close-btn" onclick="document.getElementById('certificate-overlay').style.display='none'">關閉</button>
     </div>
 
-<script>
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
-    const btnCert = document.getElementById('btn-cert');
-    const nameInput = document.getElementById('army-name');
+    <script>
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const btnCert = document.getElementById('btn-cert');
+        const nameInput = document.getElementById('army-name');
 
-    // 1. 讀取 Mic Drop 的練習次數
-    const micDropCount = parseInt(localStorage.getItem('mic_drop_count') || '0');
-    
-    // 2. 抓取第一個 checkbox (假設 Mic Drop 是第一個)
-    const micDropBox = document.getElementById('song-1');
-    const micDropLabel = micDropBox.parentElement;
+        // 1. 讀取 Mic Drop 的自動計數
+        const micDropCount = parseInt(localStorage.getItem('mic_drop_count') || '0');
+        
+        // 2. 處理 Mic Drop 狀態 (完全自動化邏輯)
+        const micDropBox = document.getElementById('song-1');
+        const micDropLabel = micDropBox.parentElement;
 
-    // 3. 在文字後面加上進度 (例如: 1/3)
-    // 避免重複添加，先檢查有沒有加過
-    if (!document.getElementById('count-display')) {
+        // 加入進度文字
         const span = document.createElement('span');
-        span.id = 'count-display';
         span.style.fontSize = '12px';
         span.style.color = '#AB46D2';
         span.style.marginLeft = '10px';
         
+        // 🔴 這裡決定是否打勾，無視任何手動紀錄
         if (micDropCount >= 3) {
             span.innerText = "✅ 大師 (3/3)";
-            micDropBox.checked = true; // 自動打勾！
-            micDropBox.disabled = true; // (選用) 鎖定不讓取消，因為已經練成了
+            micDropBox.checked = true; // 系統幫你勾
         } else {
-            span.innerText = `💪 累積: ${micDropCount}/3`;
+            span.innerText = `🔒 累積: ${micDropCount}/3`;
+            micDropBox.checked = false; // 強制不勾
         }
         micDropLabel.appendChild(span);
-    }
 
-    function updateUI() {
-        // 如果次數達標，強制確保它是勾選的
-        if (micDropCount >= 3) micDropBox.checked = true;
-
-        const checked = document.querySelectorAll('input:checked').length;
-        const total = checkboxes.length;
-        // 避免除以零
-        const percent = total === 0 ? 0 : (checked / total) * 100;
-        
-        progressBar.style.width = percent + "%";
-        progressText.innerText = `已完成 ${checked} / ${total}`;
-        
-        if (percent === 100) {
-            btnCert.disabled = false;
-            btnCert.classList.add('unlocked');
-            btnCert.innerText = "🏆 領取證書";
-        } else {
-            btnCert.disabled = true;
-            btnCert.classList.remove('unlocked');
-            btnCert.innerText = "🔒 領取證書";
+        function updateUI() {
+            const checked = document.querySelectorAll('input:checked').length;
+            const total = checkboxes.length;
+            const percent = total === 0 ? 0 : (checked / total) * 100;
+            
+            progressBar.style.width = percent + "%";
+            progressText.innerText = `已完成 ${checked} / ${total}`;
+            
+            if (percent === 100) {
+                btnCert.disabled = false;
+                btnCert.classList.add('unlocked');
+                btnCert.innerText = "🏆 領取證書";
+            } else {
+                btnCert.disabled = true;
+                btnCert.classList.remove('unlocked');
+                btnCert.innerText = "🔒 領取證書";
+            }
+            
+            // 存檔 (只存那些允許手動的項目)
+            const data = {};
+            checkboxes.forEach(box => {
+                if (!box.disabled) { // 只存沒被鎖住的
+                    data[box.id] = box.checked;
+                }
+            });
+            localStorage.setItem('army_progress', JSON.stringify(data));
+            localStorage.setItem('army_name', nameInput.value);
         }
+
+        // 3. 讀取 *其他* 手動項目的歷史 (排除 Mic Drop)
+        const savedData = JSON.parse(localStorage.getItem('army_progress')) || {};
+        checkboxes.forEach(box => {
+            // 如果是 Mic Drop，直接跳過，因為上面已經由 micDropCount 決定了
+            if (box.id === 'song-1') return; 
+
+            if (savedData[box.id]) box.checked = true;
+            
+            // 監聽變更 (只對手動項目有效)
+            box.addEventListener('change', updateUI);
+        });
+
+        nameInput.value = localStorage.getItem('army_name') || "";
+        nameInput.addEventListener('input', updateUI);
         
-        // 存檔 (Checkbox 狀態)
-        const data = {};
-        checkboxes.forEach(box => data[box.id] = box.checked);
-        localStorage.setItem('army_progress', JSON.stringify(data));
-        localStorage.setItem('army_name', nameInput.value);
-    }
+        // 初始化 UI
+        updateUI();
 
-    // 讀取 Checkbox 歷史狀態
-    const savedData = JSON.parse(localStorage.getItem('army_progress')) || {};
-    checkboxes.forEach(box => {
-        // 如果是 Mic Drop 且次數 >= 3，優先權給次數邏輯
-        if (box.id === 'song-1' && micDropCount >= 3) {
-            box.checked = true;
-        } else if (savedData[box.id]) {
-            box.checked = true;
-        }
-        
-        box.addEventListener('change', updateUI);
-    });
-
-    nameInput.value = localStorage.getItem('army_name') || "";
-    nameInput.addEventListener('input', updateUI);
-    
-    // 初始化 UI
-    updateUI();
-
-    btnCert.addEventListener('click', () => {
-        document.getElementById('cert-name').innerText = nameInput.value || "ARMY";
-        document.getElementById('cert-date').innerText = new Date().toLocaleDateString();
-        document.getElementById('certificate-overlay').style.display = 'flex';
-    });
-</script>
+        btnCert.addEventListener('click', () => {
+            document.getElementById('cert-name').innerText = nameInput.value || "ARMY";
+            document.getElementById('cert-date').innerText = new Date().toLocaleDateString();
+            document.getElementById('certificate-overlay').style.display = 'flex';
+        });
+    </script>
 </body>
-
 </html>
