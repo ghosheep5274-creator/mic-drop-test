@@ -8,7 +8,7 @@ let offset = 0;
 let lastRenderedText = "";
 
 let startTime = 0; 
-let useYoutubeMode = true; 
+let useYoutubeMode = false; // 🔴 改為 false
 let pauseStartTime = 0;
 
 let currentSongData = []; 
@@ -300,6 +300,7 @@ function renderSyncTimer(ms) {
     let deci = Math.floor((ms % 1000) / 100); 
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
+
 
 
 
