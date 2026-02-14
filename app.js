@@ -136,10 +136,31 @@ window.returnToHome = function() {
     }
 };
 
-function updatePauseButton(isPlaying) {
+
+function updatePauseButton(active) {
+    // 1. 控制按鈕外觀
     if (btnPause) {
-        btnPause.innerText = isPlaying ? "⏸ 暫停" : "▶️ 繼續";
-        btnPause.style.background = isPlaying ? "rgba(171, 70, 210, 0.3)" : "#AB46D2";
+        btnPause.innerText = active ? "⏸ 暫停" : "▶️ 繼續";
+        btnPause.style.background = active ? "rgba(171, 70, 210, 0.3)" : "#AB46D2";
+        
+        // 暫停時讓按鈕閃爍，提示使用者點擊繼續
+        if (!active) {
+            btnPause.style.animation = "pulse 1.5s infinite";
+        } else {
+            btnPause.style.animation = "none";
+        }
+    }
+
+    // 2. 控制愛心凍結 (魔鬼細節)
+    const heart = document.getElementById('metronome-icon');
+    if (heart) {
+        if (active) {
+            // 播放中：移除暫停標籤，動畫繼續
+            heart.classList.remove('paused-animation');
+        } else {
+            // 暫停中：加上暫停標籤，凍結在半空中
+            heart.classList.add('paused-animation');
+        }
     }
 }
 
@@ -288,3 +309,4 @@ function closeCertificate() {
     
     if (navigator.vibrate) navigator.vibrate(50);
 }
+
