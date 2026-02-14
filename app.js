@@ -1,5 +1,6 @@
 // app.js - Project Borahae 多歌曲非同步完整版 (2026.02.15)
 
+let lyricsCache = {}; // 🆕 用來存放所有下載好的歌詞 JSON
 let player;
 let isVideoReady = false;
 let isPlaying = false;
@@ -296,6 +297,7 @@ function renderSyncTimer(ms) {
     let deci = Math.floor((ms % 1000) / 100); 
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
+
 
 
 
