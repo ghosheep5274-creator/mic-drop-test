@@ -385,3 +385,41 @@ input:checked + .slider:before {
     transform: translateX(24px);
 }
 
+/* style.css 最下方加入 */
+
+/* 🆕 左上角回首頁按鈕 */
+#btn-home {
+    position: absolute;
+    top: 20px;
+    left: 20px; /* 跟 Help 按鈕對稱 */
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #666;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s;
+}
+
+#btn-home:hover {
+    background: #AB46D2;
+    border-color: #AB46D2;
+    transform: scale(1.1);
+}
+
+/* 調整底部按鈕佈局 (讓三個按鈕排排站) */
+.controls button {
+    width: 30%; /* 原本是 45%，現在改小一點塞三個 */
+    padding: 10px 5px; /* 字如果不夠放，縮小內距 */
+    font-size: 13px;
+}
+
+/* 暫停按鈕特別色 */
+#btn-pause {
+    border-color: #AB46D2;
+    background: rgba(171, 70, 210, 0.3);
+}
+
