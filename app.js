@@ -1,4 +1,4 @@
-// app.js - Project Borahae YouTube 整合版 (2026.02.14)
+// app.js - Project Borahae YouTube 整合修正版 (支援自動結算)
 
 let player;
 let isVideoReady = false;
@@ -16,13 +16,12 @@ const btnStart = document.getElementById('btn-start');
 
 /**
  * [區域 A] YouTube IFrame API 初始化
- * 必須在 index.html 引入 https://www.youtube.com/iframe_api
  */
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '0',
         width: '0',
-        videoId: 'e95-Gaj2iXM', // Mic Drop 預設 ID
+        videoId: 'e95-Gaj2iXM', // 使用你指定的 ID
         playerVars: {
             'autoplay': 0,
             'controls': 0,
@@ -41,22 +40,27 @@ function onYouTubeIframeAPIReady() {
 }
 
 /**
- * [區域 B] 監聽播放狀態
- * 當影片真正開始播放時，才啟動歌詞渲染循環
+ * [區域 B] 監聽播放狀態 (新增 ENDED 判定)
  */
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
         isPlaying = true;
         updateLoop();
-    } else {
+    } 
+    // 🆕 修正：如果影片播完了，直接強制跳證書
+    else if (event.data === YT.PlayerState.ENDED) {
+        isPlaying = false;
+        cancelAnimationFrame(animationFrameId);
+        showCertificate(); 
+    }
+    else {
         isPlaying = false;
         cancelAnimationFrame(animationFrameId);
     }
 }
 
 /**
- * [區域 C] 啟動邏輯修改
- * 點擊 START 時觸發影片播放
+ * [區域 C] 啟動邏輯
  */
 btnStart.addEventListener('click', () => {
     if (!isVideoReady) {
@@ -64,7 +68,6 @@ btnStart.addEventListener('click', () => {
         return;
     }
 
-    // 嘗試全螢幕 (INTJ 的嚴謹：這需要使用者主動觸發)
     if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(e => console.log(e));
     }
@@ -72,7 +75,6 @@ btnStart.addEventListener('click', () => {
     startScreen.style.display = 'none';
     playScreen.style.display = 'flex';
     
-    // 啟動 YouTube 播放 (此動作會觸發 onPlayerStateChange)
     player.playVideo();
 });
 
@@ -82,14 +84,12 @@ function adjustTime(ms) {
 }
 
 /**
- * [區域 D] 核心循環：時間基準改為 player.getCurrentTime()
+ * [區域 D] 核心渲染循環
  */
 function updateLoop() {
     if (!isPlaying || !player || !player.getCurrentTime) return; 
 
-    // 將 YouTube 當前秒數轉為毫秒，並加上手動微調值
     const currentTime = (player.getCurrentTime() * 1000) + offset;
-    
     renderSyncTimer(currentTime);
 
     const currentLyric = songData.reduce((prev, curr) => {
@@ -97,11 +97,11 @@ function updateLoop() {
     }, songData[0]);
 
     if (currentLyric) {
-        // 偵測結束
+        // 如果時間軸走到 end，也觸發證書
         if (currentLyric.type === 'end') {
-            render(currentLyric); 
+            showCertificate();
             isPlaying = false;
-            player.pauseVideo(); // 同步停止影片
+            player.pauseVideo();
             cancelAnimationFrame(animationFrameId);
             return; 
         }
@@ -109,6 +109,18 @@ function updateLoop() {
     }
 
     animationFrameId = requestAnimationFrame(updateLoop);
+}
+
+/**
+ * [區域 E] 顯示證書邏輯 (獨立化)
+ */
+function showCertificate() {
+    const cert = document.getElementById('beta-cert-overlay');
+    if (cert && cert.style.display === 'none') {
+        cert.style.display = 'flex';
+        // 慶祝震動
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
 }
 
 function renderSyncTimer(ms) {
@@ -121,7 +133,6 @@ function renderSyncTimer(ms) {
 }
 
 function render(lyricObj) {
-    // 1. 警告模式
     if (lyricObj.type === 'warning') {
         document.body.classList.add('warning-mode');
         if (lastRenderedText !== lyricObj.text) {
@@ -134,11 +145,10 @@ function render(lyricObj) {
         document.body.classList.remove('warning-mode');
     }
 
-    // 2. 一般歌詞渲染
     if (lastRenderedText !== lyricObj.text) {
         lyricBox.innerText = lyricObj.text;
         lyricBox.className = ""; 
-        void lyricBox.offsetWidth; // 強制重繪以重啟 CSS 動畫
+        void lyricBox.offsetWidth; 
         
         lyricBox.classList.add('active');
         if (lyricObj.type === 'chant') {
@@ -152,22 +162,12 @@ function render(lyricObj) {
         } else if (lyricObj.type === 'wave') {
             lyricBox.classList.add('type-sing', 'icon-wave');
         }
-        
         lastRenderedText = lyricObj.text;
-    }
-    
-    // 3. 任務結束 (封測證書)
-    if (lyricObj.type === 'end') {
-        const cert = document.getElementById('beta-cert-overlay');
-        if (cert.style.display === 'none') {
-            cert.style.display = 'flex';
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        }
     }
 }
 
 /**
- * [區域 E] 說明與關閉邏輯 (含 YouTube 重置)
+ * [區域 F] 關閉與重置
  */
 function toggleHelp(show) {
     const modal = document.getElementById('help-modal');
@@ -180,20 +180,14 @@ document.getElementById('help-modal').addEventListener('click', (e) => {
 
 function closeCertificate() {
     document.getElementById('beta-cert-overlay').style.display = 'none';
-    
-    // 停止影片並回到開頭
-    if (player) {
-        player.stopVideo();
-    }
+    if (player) player.stopVideo();
     
     isPlaying = false;
     offset = 0;
     lastRenderedText = ""; 
-    
     cancelAnimationFrame(animationFrameId);
     
     document.getElementById('play-screen').style.display = 'none';
     document.getElementById('start-screen').style.display = 'flex';
-    
     if (navigator.vibrate) navigator.vibrate(50);
 }
