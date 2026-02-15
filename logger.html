@@ -106,7 +106,7 @@
         const adjustedTime = Math.max(0, rawTime - reactionDelay).toFixed(3);
         const newId = Date.now();
         
-        logs.push({ id: newId, time: parseFloat(adjustedTime), text: "", type: "Chant" });
+        logs.push({ id: newId, time: parseFloat(adjustedTime), text: "", type: "chant" });
         logs.sort((a, b) => a.time - b.time);
         
         renderLogs();
@@ -178,4 +178,5 @@
     }
 </script>
 </body>
+
 </html>
