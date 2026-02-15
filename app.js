@@ -26,29 +26,48 @@ const modeText = document.getElementById('mode-text');
 const btnPause = document.getElementById('btn-pause');
 const songSelect = document.getElementById('song-select');
 
-// [區域 B] 模式切換監聽 - 簡潔固定版
+// [區域 B] 模式切換監聽 - 安全防呆版
 if (musicToggle) {
     musicToggle.addEventListener('change', (e) => {
-        // 1. 同步進度
-        let currentProgress = useYoutubeMode ? 
-            (player.getCurrentTime() * 1000) : 
-            (Date.now() - startTime);
-
-        useYoutubeMode = e.target.checked;
-
-        // 2. 關鍵同步邏輯
+        // 1. 安全獲取當前進度
+        let currentProgress = 0;
+        
         if (useYoutubeMode) {
-            if (player && isVideoReady) {
-                player.seekTo(currentProgress / 1000);
+            // 如果原本是 YouTube 模式，嘗試抓取播放器時間
+            // 🛑 防呆：確認 player 真的存在且有 getCurrentTime 方法
+            if (player && typeof player.getCurrentTime === 'function') {
+                currentProgress = player.getCurrentTime() * 1000;
+            } else {
+                // 如果 player 壞掉或沒準備好，改用系統時間推算 (Fallback)
+                currentProgress = Date.now() - startTime - offset;
+            }
+        } else {
+            // 如果原本是離線模式，直接用系統時間
+            currentProgress = Date.now() - startTime;
+        }
+
+        // 2. 切換模式變數
+        useYoutubeMode = e.target.checked; 
+
+        // 3. 更新 UI 文字
+        if (modeText) {
+            modeText.innerText = useYoutubeMode ? "🎵 音樂模式" : "🔇 離線模式";
+            modeText.style.color = useYoutubeMode ? "#AB46D2" : "#888"; // 紫色 vs 灰色
+        }
+
+        // 4. 重置起始時間 (將剛才算出的 currentProgress 帶入新的基準)
+        if (useYoutubeMode) {
+            // 切換到 Online: 嘗試 seek 到對應秒數
+            if (player && typeof player.seekTo === 'function') {
+                player.seekTo(currentProgress / 1000, true);
                 if (isPlaying) player.playVideo();
             }
         } else {
+            // 切換到 Offline: 重設 Date.now() 基準點
             startTime = Date.now() - currentProgress;
-            if (player) player.pauseVideo();
         }
-
-        // 3. UI 修改：固定文字不變，僅切換顏色
-        modeText.style.color = useYoutubeMode ? "#AB46D2" : "#888";
+        
+        console.log(`Mode switched. New mode: ${useYoutubeMode ? 'Online' : 'Offline'}, Progress: ${currentProgress}ms`);
     });
 }
 
@@ -351,6 +370,7 @@ function renderSyncTimer(ms) {
     let deci = Math.floor((ms % 1000) / 100); 
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
+
 
 
 
