@@ -180,16 +180,16 @@
         renderLogs();
         saveToLocal(); 
 
-        // 讓新的一行閃爍並聚焦
         setTimeout(() => {
             const row = document.querySelector(`.log-item[data-id="${newId}"]`);
             if (row) {
-                row.classList.add('new-entry'); // 加特效
-                const input = row.querySelector('input');
-                if(input) {
-                    input.focus();
-                    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                row.classList.add('new-entry');
+                // 🛑 將下面這兩行刪除或註釋掉：
+                // const input = row.querySelector('input');
+                // if(input) input.focus(); 
+                
+                // ✅ 只保留滾動視角，讓你看到新抓的點在哪即可
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }, 50);
     }
@@ -272,3 +272,4 @@
 </script>
 </body>
 </html>
+
