@@ -40,8 +40,8 @@
             <div class="timer-display">影片進度：<span id="current-sec">0.000</span> s</div>
             
             <div style="display: flex; gap: 10px;">
-                <button onclick="applyGlobalOffset(-0.1)" style="background:#444;">全部提前 0.1s</button>
-                <button onclick="applyGlobalOffset(0.1)" style="background:#444;">全部延後 0.1s</button>
+             <button onclick="applyGlobalOffset(-100)" style="background:#444;">全部提前 100ms</button>
+             <button onclick="applyGlobalOffset(100)" style="background:#444;">全部延後 100ms</button>
             </div>
             
             <div class="hotkey-hint">
@@ -159,11 +159,12 @@
         }
     }
 
-    function applyGlobalOffset(seconds) {
-        logs = logs.map(log => ({ ...log, time: Math.max(0, parseFloat((log.time + seconds).toFixed(3))) }));
-        logs.sort((a, b) => a.time - b.time);
-        renderLogs();
-        saveToLocal();
+    function applyGlobalOffset(ms) {
+// 🔴 直接進行整數加減
+    logs = logs.map(log => ({ ...log, time: Math.max(0, log.time + ms) }));
+    logs.sort((a, b) => a.time - b.time);
+    renderLogs();
+    saveToLocal();
     }
 
     function exportJSON() {
@@ -183,4 +184,5 @@
 </body>
 
 </html>
+
 
