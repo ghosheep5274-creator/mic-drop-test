@@ -263,6 +263,17 @@ function updateLoop() {
 // [區域 G] 渲染 (Render)
 function render(lyricObj) {
     if (!lyricBox) return;
+
+    // 🌸 新增：偵測特效指令
+    if (lyricObj.type === 'sakura_start') {
+        startSakura();
+        return; // 這種指令不需要印出文字，直接跳出
+    }
+    if (lyricObj.type === 'sakura_stop') {
+        stopSakura();
+        return;
+    }
+
     
     // 處理特殊 Type 樣式
     if (lyricObj.type === 'warning') {
@@ -378,6 +389,9 @@ function finishGame() {
     localStorage.setItem(key, count);
     console.log(`Song ${currentSongId} count: ${count}`);
 
+    //🌸 新增：歌曲結束時停止生成 (舊的讓它飄完很美)
+    stopSakura();
+    
     // 延遲後回首頁
     setTimeout(() => {
         resetToTitle(); 
@@ -398,7 +412,7 @@ function resetToTitle() {
     if (player && typeof player.stopVideo === 'function') {
         player.stopVideo();
     }
-    
+    clearSakura();
     updatePauseButton(false);
 }
 
@@ -469,4 +483,5 @@ function createPetal() {
         petal.remove();
     }, parseFloat(duration) * 1000);
 }
+
 
