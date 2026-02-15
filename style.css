@@ -458,3 +458,30 @@ input:checked + .slider:before {
 #song-select option[disabled]::after {
     content: " 🔒"; /* 雖然 option 不支援 ::after，但這是一個好的設計備忘 */
 }
+
+
+/* 🌸 櫻花特效樣式 */
+.sakura-petal {
+    position: fixed;
+    top: -10px;
+    background-color: #ffc0cb; /* 淺粉紅 */
+    border-radius: 100% 0 100% 0; /* 花瓣形狀 */
+    opacity: 0.8;
+    z-index: 5; /* 在背景之上，但在文字之下(若要蓋住文字可設99) */
+    pointer-events: none; /* 讓滑鼠可以穿透花瓣操作 */
+    animation: fall linear forwards;
+}
+
+/* 飄落動畫：往下掉 + 旋轉 + 左右搖擺 */
+@keyframes fall {
+    0% {
+        top: -10%;
+        transform: translateX(0) rotate(0deg);
+        opacity: 0.8;
+    }
+    100% {
+        top: 110%; /* 掉出螢幕下方 */
+        transform: translateX(20px) rotate(360deg); /* 隨風飄一點 */
+        opacity: 0;
+    }
+}
