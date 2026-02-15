@@ -515,11 +515,9 @@ input:checked + .slider:before {
     opacity: 0.35; 
 }
 
-/* 👇 確保歌詞永遠最亮、在最上層 */
 #lyric-box {
     position: relative;
-    z-index: 99; /* 強制置頂 */
-    text-shadow: 0 0 10px #000; /* 加強文字陰影，確保在任何背景都看得清 */
+    z-index: 99; 
 }
 
 /* 2. 火星餘燼粒子 */
@@ -553,5 +551,6 @@ input:checked + .slider:before {
         opacity: 0;
     }
 }
+
 
 
