@@ -334,10 +334,10 @@ function finishGame() {
     console.log(`Song ${currentSongId} count: ${count}`);
 
     // 4. 不跳證書，直接休息一下後返回首頁
-    // 設定 1 秒緩衝，讓使用者意識到歌曲結束，不要太突然切掉
+    // 設定 1.8 秒緩衝，讓使用者意識到歌曲結束，不要太突然切掉
     setTimeout(() => {
         resetToTitle(); 
-    }, 1000); 
+    }, 1800); 
 }
 
 // 🆕 新函式：重置並返回標題畫面 (取代原本的 closeCertificate)
@@ -370,6 +370,7 @@ function renderSyncTimer(ms) {
     let deci = Math.floor((ms % 1000) / 100); 
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
+
 
 
 
