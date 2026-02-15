@@ -78,6 +78,7 @@ async function preloadAllLyrics() {
 
 // 頁面載入時執行初始化
 window.addEventListener('DOMContentLoaded', () => {
+    initEffects(); // 👈 加入這行，建立夕陽背景層
     renderSongSelect();
     preloadAllLyrics();
 });
@@ -274,6 +275,12 @@ function render(lyricObj) {
         return;
     }
 
+    // 🔥 新增：I Need U 特效指令
+    if (lyricObj.type === 'sunset_start') { showSunset(); return; }
+    if (lyricObj.type === 'sunset_stop') { hideSunset(); return; }
+    if (lyricObj.type === 'ember_start') { startEmbers(); return; }
+    if (lyricObj.type === 'ember_stop') { stopEmbers(); return; }
+
     
     // 處理特殊 Type 樣式
     if (lyricObj.type === 'warning') {
@@ -391,6 +398,7 @@ function finishGame() {
 
     //🌸 新增：歌曲結束時停止生成 (舊的讓它飄完很美)
     stopSakura();
+    clearAllEffects(); // 👈 歌曲結束也清空
     
     // 延遲後回首頁
     setTimeout(() => {
@@ -413,6 +421,7 @@ function resetToTitle() {
         player.stopVideo();
     }
     clearSakura();
+    clearAllEffects(); // 👈 改用這個大掃除函式
     updatePauseButton(false);
 }
 
@@ -426,7 +435,10 @@ function renderSyncTimer(ms) {
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
 
-// [區域 I] 🌸 櫻花特效引擎 (Sakura Engine)
+
+// ===========================
+// [區域 I] 特效引擎 (Sakura, Sunset, Embers)
+// ===========================
 
 let sakuraInterval = null;
 
@@ -485,5 +497,86 @@ function createPetal() {
 }
 
 
+
+// --- 通用初始化 (在 window.onload 呼叫) ---
+function initEffects() {
+    // 如果還沒有夕陽層，就建立一個
+    if (!document.getElementById('sunset-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.id = 'sunset-overlay';
+        // 把它插在 body 的最前面，確保在文字後面
+        document.body.insertBefore(overlay, document.body.firstChild);
+    }
+}
+// 記得在下面的 window.addEventListener('DOMContentLoaded', ...) 裡呼叫 initEffects();
+
+
+// --- 🔥 Sunset + Embers (I Need U) ---
+let emberInterval = null;
+
+// 啟動夕陽
+function showSunset() {
+    const overlay = document.getElementById('sunset-overlay');
+    if (overlay) overlay.classList.add('active');
+    console.log("🌅 夕陽漸層啟動");
+}
+
+// 關閉夕陽
+function hideSunset() {
+    const overlay = document.getElementById('sunset-overlay');
+    if (overlay) overlay.classList.remove('active');
+    console.log("🌃 回歸黑夜");
+}
+
+// 啟動火星
+function startEmbers() {
+    if (emberInterval) return;
+    console.log("🔥 餘燼開始燃燒");
+    // 頻率：每 120ms 產生一顆 (密集一點比較有燃燒感)
+    emberInterval = setInterval(createEmber, 120);
+}
+
+// 停止火星生成
+function stopEmbers() {
+    if (emberInterval) {
+        clearInterval(emberInterval);
+        emberInterval = null;
+        console.log("🔥 餘燼熄滅");
+    }
+}
+
+// 清除所有特效 (回首頁用)
+function clearAllEffects() {
+    // 停止生成器
+    stopSakura(); // 如果有櫻花
+    stopEmbers(); // 如果有火星
+    hideSunset(); // 關閉夕陽
+
+    // 移除畫面上的殘留粒子
+    document.querySelectorAll('.sakura-petal').forEach(el => el.remove());
+    document.querySelectorAll('.ember-particle').forEach(el => el.remove());
+}
+
+// 產生單顆火星
+function createEmber() {
+    const ember = document.createElement('div');
+    ember.classList.add('ember-particle');
+    
+    // 隨機屬性
+    const size = Math.random() * 5 + 2 + 'px'; // 大小 2~7px
+    const left = Math.random() * 100 + 'vw'; // 水平位置
+    const duration = Math.random() * 4 + 3 + 's'; // 飄升速度 3~7秒
+    const drift = (Math.random() * 150 - 75) + 'px'; // 左右大幅飄移 (-75px ~ 75px)
+
+    ember.style.width = size;
+    ember.style.height = size;
+    ember.style.left = left;
+    ember.style.animationDuration = duration;
+    ember.style.setProperty('--drift', drift);
+
+    document.body.appendChild(ember);
+
+    setTimeout(() => { ember.remove(); }, parseFloat(duration) * 1000);
+}
 
 
