@@ -51,7 +51,7 @@ if (musicToggle) {
 
         // 3. 更新 UI 文字
         if (modeText) {
-            modeText.innerText = useYoutubeMode ? "🎵 音樂模式" : "🔇 離線模式";
+            modeText.innerText = "🎵 音樂模式";
             modeText.style.color = useYoutubeMode ? "#AB46D2" : "#888"; // 紫色 vs 灰色
         }
 
@@ -370,6 +370,7 @@ function renderSyncTimer(ms) {
     let deci = Math.floor((ms % 1000) / 100); 
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
+
 
 
 
