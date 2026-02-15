@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Borahae Logger - 手工對拍最終版</title>
+    <title>Borahae Logger v2.1 - 焦點修復版</title>
     <style>
         :root { --main-purple: #a020f0; --bg-dark: #121212; --panel-bg: #1e1e1e; }
         body { background: var(--bg-dark); color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
@@ -10,18 +10,43 @@
         .left-panel { position: sticky; top: 20px; height: fit-content; }
         .card { background: var(--panel-bg); padding: 20px; border-radius: 16px; border: 1px solid #333; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         h2 { color: var(--main-purple); margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        
         .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
         input[type="text"] { background: #2d2d2d; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; flex: 1; outline: none; }
-        #player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #333; }
+        
+        #player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #333; position: relative; }
+        
+        /* 焦點提示框 (當焦點在 Iframe 裡時顯示) */
+        #focus-guard {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 4px solid #AB46D2; box-sizing: border-box; pointer-events: none; z-index: 10;
+            box-shadow: inset 0 0 20px #AB46D2;
+        }
+
         .timer-display { font-size: 24px; font-family: monospace; color: var(--main-purple); margin: 15px 0; text-align: center; background: #000; padding: 10px; border-radius: 8px; }
+        
         .right-panel { background: var(--panel-bg); padding: 20px; border-radius: 16px; height: 90vh; overflow-y: auto; border: 1px solid #333; }
-        .log-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #333; animation: fadeIn 0.3s ease; }
+        
+        /* Log Item 樣式 */
+        .log-item { display: flex; align-items: center; gap: 8px; padding: 8px; border-bottom: 1px solid #333; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-        .log-item span { font-family: monospace; color: #bbb; width: 65px; font-size: 14px; }
-        .log-item input { flex: 1; background: transparent; border: none; border-bottom: 1px solid #444; color: white; padding: 5px; }
+        /* 被插入的新項目會有閃爍特效 */
+        .log-item.new-entry { animation: flashPurple 1s ease; }
+        @keyframes flashPurple { 0% { background: rgba(171, 70, 210, 0.5); } 100% { background: transparent; } }
+
+        .log-item span { font-family: monospace; color: #bbb; width: 60px; font-size: 13px; text-align: right; margin-right: 5px; }
+        .log-item input { flex: 1; background: transparent; border: none; border-bottom: 1px solid #444; color: white; padding: 5px; font-size: 14px; }
         .log-item input:focus { border-bottom-color: var(--main-purple); outline: none; }
+
+        .log-item select { background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; padding: 4px; font-size: 12px; cursor: pointer; }
+        .log-item[data-type="chant"] input { color: #AB46D2; } 
+        .log-item[data-type="sing"] input { color: #00ffff; }  
+        .log-item[data-type="scream"] input { color: #ff0055; font-weight: bold; }
+
         button { background: var(--main-purple); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         button:hover { background: #bc4df5; }
+        .del-btn { background: transparent; color: #666; padding: 5px 10px; font-size: 16px; }
+        .del-btn:hover { color: #ff4444; background: rgba(255,0,0,0.1); }
         .hotkey-hint { font-size: 12px; color: #777; line-height: 1.6; margin-top: 10px; }
         mark { background: #444; color: #ddd; padding: 2px 5px; border-radius: 4px; }
     </style>
@@ -31,32 +56,37 @@
 <div class="container">
     <div class="left-panel">
         <div class="card">
-            <h2>💜 Borahae Logger v1.2</h2>
+            <h2>💜 Borahae Logger v2.1</h2>
             <div class="input-group">
-                <input type="text" id="yt-url" placeholder="輸入 YouTube 影片 ID (例如: wWxK5eLFw24)">
+                <input type="text" id="yt-url" placeholder="輸入 YouTube 影片 ID" value="MBdVXkSdhwU">
                 <button onclick="loadVideo()">載入影片</button>
             </div>
-            <div id="player-container"><div id="player"></div></div>
+            
+            <div id="player-container">
+                <div id="player"></div>
+                <div id="focus-guard"></div> </div>
+            
             <div class="timer-display">影片進度：<span id="current-sec">0.000</span> s</div>
             
             <div style="display: flex; gap: 10px;">
-             <button onclick="applyGlobalOffset(-100)" style="background:#444;">全部提前 100ms</button>
-             <button onclick="applyGlobalOffset(100)" style="background:#444;">全部延後 100ms</button>
+             <button onclick="applyGlobalOffset(-100)" style="background:#444;">⏪ -100ms</button>
+             <button onclick="applyGlobalOffset(100)" style="background:#444;">⏩ +100ms</button>
+             <button onclick="forceFocus()" style="background:#222; border:1px solid #555;">🎯 重置焦點 (按我修復)</button>
             </div>
             
             <div class="hotkey-hint">
-                💡 <b>手工對拍秘訣：</b><br>
-                1. 廣告播完後按下播放。<br>
-                2. 聽到應援點按 <mark>Space</mark>：自動抓點、<b>自動排序</b>、自動 Focus。<br>
-                3. 按下 <mark>Esc</mark>：切換影片 暫停/播放。<br>
-                4. 系統會<b>自動儲存</b>進度至瀏覽器，不用怕關掉網頁。
+                💡 <b>插入補錄教學：</b><br>
+                1. 拖動進度條到你想補錄的地方。<br>
+                2. <b>點擊一下這裡 (或按 "重置焦點") 確保空白鍵有效。</b><br>
+                3. 按下空白鍵抓點，系統會自動將新紀錄<b>插入</b>到正確位置。<br>
+                4. <mark>Space</mark>: 抓點 / <mark>Esc</mark>: 播放暫停
             </div>
         </div>
 
         <div class="card">
             <button onclick="exportJSON()" style="width: 100%; padding: 15px;">🚀 生成 JSON 並複製</button>
             <textarea id="json-output" style="width:100%; height:80px; margin-top:10px; background:#000; color:#0f0; font-family:monospace; font-size:11px;" readonly></textarea>
-            <button onclick="clearLogs()" style="background:#333; width:100%; margin-top:10px; font-size:11px;">清空所有紀錄 (慎用)</button>
+            <button onclick="clearLogs()" style="background:#333; width:100%; margin-top:10px; font-size:11px;">🗑️ 清空所有紀錄</button>
         </div>
     </div>
 
@@ -70,13 +100,16 @@
 <script>
     let player;
     let logs = [];
-    const reactionDelay = 200; // 社長設定的反應補償
+    const reactionDelay = 200; 
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
-            height: '100%', width: '100%', videoId: 'wWxK5eLFw24',
+            height: '100%', width: '100%', videoId: 'MBdVXkSdhwU',
             playerVars: { 'autoplay': 0, 'controls': 1 },
-            events: { 'onReady': loadFromLocal } // 載入時讀取舊進度
+            events: { 
+                'onReady': loadFromLocal,
+                'onStateChange': onPlayerStateChange // 🆕 新增狀態監聽
+            } 
         });
         setInterval(() => {
             if (player && player.getCurrentTime) {
@@ -85,17 +118,40 @@
         }, 30);
     }
 
+    // 🆕 自動奪回焦點邏輯
+    function onPlayerStateChange(event) {
+        // 當影片開始播放 (State=1) 或 暫停 (State=2)
+        if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.PAUSED) {
+            // 強制把焦點還給 window，這樣空白鍵才不會被 YouTube 吃掉
+            window.focus();
+            document.activeElement.blur(); 
+        }
+    }
+
+    function forceFocus() {
+        window.focus();
+        if(document.activeElement) document.activeElement.blur();
+    }
+
     function loadVideo() {
         const vid = document.getElementById('yt-url').value;
         if(vid) player.loadVideoById(vid);
     }
 
     window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
         if (e.code === 'Space') {
+            e.preventDefault();
             const state = player.getPlayerState();
-            if (state === 1) { e.preventDefault(); captureTime(); }
+            // 邏輯：如果正在播放，就抓時間；如果暫停中，就開始播放
+            if (state === 1) {
+                captureTime(); 
+            } else {
+                player.playVideo();
+            }
         }
-        if (e.code === 'Escape') {
+        if (e.code === 'Esc' || e.code === 'Escape') {
             const state = player.getPlayerState();
             state === 1 ? player.pauseVideo() : player.playVideo();
         }
@@ -103,42 +159,71 @@
 
     function captureTime() {
         const rawTime = player.getCurrentTime();
-    // 🔴 修改：秒轉毫秒並取整數，再減去補償值
         const msTime = Math.round(rawTime * 1000) - reactionDelay;
         const adjustedTime = Math.max(0, msTime); 
         const newId = Date.now();
-    
-    // 🔴 儲存進 logs 的時間現在是整數毫秒
-        logs.push({ id: newId, time: adjustedTime, text: "", type: "chant" });
-        logs.sort((a, b) => a.time - b.time);
+        
+        // 預設抓取上一筆的 type，方便連續輸入
+        let defaultType = "chant";
+        if(logs.length > 0) {
+             // 找出時間最接近但比現在早的那一筆
+             const prevLog = logs.reduce((prev, curr) => 
+                (curr.time < adjustedTime && curr.time > prev.time) ? curr : prev
+             , {time: -1, type: "chant"});
+             if(prevLog.time !== -1) defaultType = prevLog.type;
+        }
+
+        // 插入新紀錄 (因為我們會 sort，所以它會自動跑到中間)
+        logs.push({ id: newId, time: adjustedTime, text: "", type: defaultType });
+        logs.sort((a, b) => a.time - b.time); // 自動排序！
         
         renderLogs();
-        saveToLocal(); // 每次按 Space 就存檔
+        saveToLocal(); 
 
+        // 讓新的一行閃爍並聚焦
         setTimeout(() => {
-            const targetInput = document.querySelector(`[data-id="${newId}"] input`);
-            if (targetInput) {
-                targetInput.focus();
-                targetInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const row = document.querySelector(`.log-item[data-id="${newId}"]`);
+            if (row) {
+                row.classList.add('new-entry'); // 加特效
+                const input = row.querySelector('input');
+                if(input) {
+                    input.focus();
+                    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
         }, 50);
     }
 
     function renderLogs() {
-    const list = document.getElementById('log-list');
-    list.innerHTML = logs.map((log) => `
-        <div class="log-item" data-id="${log.id}">
-            <span>${log.time}ms</span> 
-            <input type="text" value="${log.text}" oninput="updateLogText(${log.id}, this.value)" placeholder="輸入應援詞...">
-            <button class="btn-del" onclick="removeLog(${log.id})" style="background:none; border:none; color:#555; cursor:pointer;">✕</button>
-        </div>
-    `).join('');
+        const list = document.getElementById('log-list');
+        list.innerHTML = logs.map((log) => `
+            <div class="log-item" data-id="${log.id}" data-type="${log.type}">
+                <span>${log.time}ms</span> 
+                <select onchange="updateLogType(${log.id}, this.value)">
+                    <option value="chant" ${log.type === 'chant' ? 'selected' : ''}>💜 Chant</option>
+                    <option value="sing" ${log.type === 'sing' ? 'selected' : ''}>🧊 Sing</option>
+                    <option value="scream" ${log.type === 'scream' ? 'selected' : ''}>🔥 Scream</option>
+                </select>
+                <input type="text" value="${log.text}" oninput="updateLogText(${log.id}, this.value)" placeholder="輸入應援詞...">
+                <button class="del-btn" onclick="removeLog(${log.id})">✕</button>
+            </div>
+        `).join('');
     }
 
     function updateLogText(id, val) {
         const item = logs.find(l => l.id === id);
         if (item) item.text = val;
-        saveToLocal(); // 打字也自動存檔
+        saveToLocal(); 
+    }
+
+    function updateLogType(id, val) {
+        const item = logs.find(l => l.id === id);
+        if (item) {
+            item.type = val;
+            const row = document.querySelector(`.log-item[data-id="${id}"]`);
+            if(row) row.setAttribute('data-type', val);
+        }
+        saveToLocal();
     }
 
     function removeLog(id) {
@@ -148,11 +233,11 @@
     }
 
     function saveToLocal() {
-        localStorage.setItem('borahae_draft', JSON.stringify(logs));
+        localStorage.setItem('borahae_draft_v2', JSON.stringify(logs));
     }
 
     function loadFromLocal() {
-        const draft = localStorage.getItem('borahae_draft');
+        const draft = localStorage.getItem('borahae_draft_v2');
         if (draft) {
             logs = JSON.parse(draft);
             renderLogs();
@@ -160,29 +245,30 @@
     }
 
     function applyGlobalOffset(ms) {
-// 🔴 直接進行整數加減
-    logs = logs.map(log => ({ ...log, time: Math.max(0, log.time + ms) }));
-    logs.sort((a, b) => a.time - b.time);
-    renderLogs();
-    saveToLocal();
+        logs = logs.map(log => ({ ...log, time: Math.max(0, log.time + ms) }));
+        logs.sort((a, b) => a.time - b.time);
+        renderLogs();
+        saveToLocal();
     }
 
     function exportJSON() {
         const exportData = logs.map(({time, text, type}) => ({time, text, type}));
-        document.getElementById('json-output').value = JSON.stringify(exportData, null, 2);
+        const jsonStr = JSON.stringify(exportData, null, 2);
+        const textarea = document.getElementById('json-output');
+        textarea.value = jsonStr;
+        textarea.select();
+        document.execCommand('copy');
+        alert("已複製到剪貼簿！");
     }
 
     function clearLogs() {
-        if(confirm("確定要清空嗎？這會刪除瀏覽器內存儲的所有當前進度！")) {
+        if(confirm("確定要清空嗎？")) {
             logs = [];
-            localStorage.removeItem('borahae_draft');
+            localStorage.removeItem('borahae_draft_v2');
             renderLogs();
             document.getElementById('json-output').value = "";
         }
     }
 </script>
 </body>
-
 </html>
-
-
