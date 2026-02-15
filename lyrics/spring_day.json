@@ -19,6 +19,7 @@
   { "time": 104050, "text": "(Man-na-ge doel-kka)", "type": "sing" },
   { "time": 127446, "text": "(Ni-ga byeon-han geon-ji)", "type": "sing" },
   { "time": 128956, "text": "(Nae-ga byeon-han geon-ji)", "type": "sing" },
+  { "time": 159000, "text": "", "type": "sakura_start" },
   { "time": 171201, "text": "(Bo-go sip-da)", "type": "sing" },
   { "time": 175919, "text": "(Bo-go sip-da)", "type": "sing" },
   { "time": 189222, "text": "(Neol bo-ge doel-kka)", "type": "sing" },
@@ -28,5 +29,6 @@
   { "time": 229495, "text": "(Bo-go sip-da)", "type": "sing" },
   { "time": 243144, "text": "(Man-na-reo gal-ge)", "type": "sing" },
   { "time": 247625, "text": "(De-ri-reo gal-ge)", "type": "sing" },
-  { "time": 271894, "text": "wo wo wo ~~", "type": "wave" }
+  { "time": 271894, "text": "wo wo wo ~~", "type": "wave" },
+  { "time": 271900, "text": "", "type": "sakura_stop" }
 ]
