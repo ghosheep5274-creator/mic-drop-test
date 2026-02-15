@@ -411,3 +411,62 @@ function renderSyncTimer(ms) {
     let deci = Math.floor((ms % 1000) / 100); 
     syncTimer.innerText = `${min < 10 ? '0'+min : min}:${sec < 10 ? '0'+sec : sec}.${deci}`;
 }
+
+// [區域 I] 🌸 櫻花特效引擎 (Sakura Engine)
+
+let sakuraInterval = null;
+
+// 啟動櫻花
+function startSakura() {
+    if (sakuraInterval) return; // 避免重複啟動
+    console.log("🌸 櫻花季開始");
+    
+    // 每 300毫秒 產生一片花瓣 (數字越小花越密)
+    sakuraInterval = setInterval(createPetal, 300);
+}
+
+// 停止櫻花 (停止生成，舊的讓它飄完)
+function stopSakura() {
+    if (sakuraInterval) {
+        clearInterval(sakuraInterval);
+        sakuraInterval = null;
+        console.log("🌸 櫻花季結束");
+    }
+}
+
+// 強制清除所有花瓣 (回首頁時用)
+function clearSakura() {
+    stopSakura();
+    document.querySelectorAll('.sakura-petal').forEach(el => el.remove());
+}
+
+// 產生單片花瓣
+function createPetal() {
+    const petal = document.createElement('div');
+    petal.classList.add('sakura-petal');
+    
+    // 隨機屬性
+    const size = Math.random() * 10 + 5 + 'px'; // 大小 5~15px
+    const left = Math.random() * 100 + 'vw'; // 水平位置 0~100%
+    const duration = Math.random() * 3 + 4 + 's'; // 飄落時間 4~7秒 (慢一點比較溫柔)
+    const delay = Math.random() * 2 + 's'; // 隨機延遲
+
+    petal.style.width = size;
+    petal.style.height = size;
+    petal.style.left = left;
+    petal.style.animationDuration = duration;
+    // petal.style.animationDelay = delay; // 不需要延遲，直接下比較順
+    
+    // 偶爾出現深粉紅
+    if (Math.random() > 0.8) {
+        petal.style.backgroundColor = '#ffb7b2'; 
+    }
+
+    document.body.appendChild(petal);
+
+    // 動畫結束後自我銷毀，避免記憶體洩漏
+    setTimeout(() => {
+        petal.remove();
+    }, parseFloat(duration) * 1000);
+}
+
