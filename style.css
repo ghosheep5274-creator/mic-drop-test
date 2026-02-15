@@ -111,6 +111,8 @@ body {
     word-wrap: break-word;
     min-height: 80px;
     transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative; 
+    z-index: 99;
 }
 
 .active { transform: scale(1.1); color: white; }
@@ -548,6 +550,7 @@ input:checked + .slider:before {
         opacity: 0;
     }
 }
+
 
 
 
