@@ -485,3 +485,58 @@ input:checked + .slider:before {
         opacity: 0;
     }
 }
+
+/* ===========================
+   🔥 I Need U 特效組：夕陽 + 餘燼
+=========================== */
+
+/* 1. 夕陽背景罩層 */
+#sunset-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* 初始狀態：透明 */
+    opacity: 0;
+    /* 漸層色：深藍 -> 紫紅 -> 橘黃 (模擬黃昏) */
+    background: linear-gradient(to bottom, #2c3e50, #4a144b, #ff4500, #ffae00);
+    z-index: 1; /* 在最底層背景之上 */
+    transition: opacity 3s ease-in-out; /* 緩慢出現/消失 (3秒) */
+    pointer-events: none;
+}
+
+/* 啟動夕陽時的狀態 */
+#sunset-overlay.active {
+    opacity: 0.8; /* 稍微保留一點原本黑色背景的質感 */
+}
+
+/* 2. 火星餘燼粒子 */
+.ember-particle {
+    position: fixed;
+    bottom: -20px; /* 從畫面外下方開始 */
+    /* 火星核心顏色：亮橘黃 */
+    background: radial-gradient(circle, #fff700 0%, #ff4500 40%, transparent 100%);
+    border-radius: 50%;
+    /* 發光暈影 */
+    box-shadow: 0 0 5px #ff4500, 0 0 15px #ff8c00; 
+    opacity: 0;
+    z-index: 5; /* 在夕陽之上，但在文字之下 */
+    pointer-events: none;
+    animation: emberRise linear forwards;
+    will-change: transform, opacity; /* 效能優化 */
+}
+
+/* 火星向上飄升動畫 */
+@keyframes emberRise {
+    0% {
+        bottom: -20px;
+        transform: translateX(0) scale(1);
+        opacity: 0;
+    }
+    10% { opacity: 1; } /* 快速出現 */
+    50% { opacity: 0.7; transform: translateX(var(--drift)) scale(0.8); } /* 中途飄移+變暗 */
+    100% {
+        bottom: 105vh; /* 飄出頂部 */
+        transform: translateX(calc(var(--drift) * 1.5)) scale(0.2); /* 繼續飄+變很小 */
+        opacity: 0;
+    }
+}
+
