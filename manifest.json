@@ -1,18 +1,15 @@
 {
-    "name": "Purple Mic",
-    "short_name": "PurpleMic",
-    "start_url": "/mic-drop-test/index.html",
-    "scope": "/mic-drop-test/",
-    "display": "standalone",
-    "background_color": "#000000",
-    "theme_color": "#AB46D2",
-    "icons": [
-     {
-      "src": "https://via.placeholder.com/192/AB46D2/FFFFFF?text=BTS", 
+  "name": "Purple Fanchant",
+  "short_name": "Borahae",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#AB46D2",
+  "icons": [
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAACrtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNL///+rtNLI75E3AAAAHnRSTlMAAAAAAABubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5u4X/Z6QAAAFZJREFUeNrtwTEBAAAAwqD1T20JT6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4GfLgAAeF42r4AAAAASUVORK5CYII=",
       "sizes": "192x192",
       "type": "image/png"
-     }
-   ]
+    }
+  ]
 }
-
-
