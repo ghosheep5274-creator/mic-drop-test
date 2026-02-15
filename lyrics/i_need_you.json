@@ -47,7 +47,6 @@
   { "time": 149292, "text": "scream!", "type": "scream" },
   { "time": 154465, "text": "Girl!-②", "type": "chant" },
   { "time": 163274, "text": "scream!", "type": "scream" },
-  // 🔥 副歌爆發點，火星開始向上飄
   { "time": 173925, "text": "", "type": "ember_start" },
   { "time": 175024, "text": "Wae-①", "type": "chant" },
   { "time": 181102, "text": "Wae-②", "type": "chant" },
@@ -63,7 +62,6 @@
   { "time": 206139, "text": "BTS!", "type": "chant" },
   { "time": 207680, "text": "BTS!", "type": "chant" },
   { "time": 209164, "text": "BTS!", "type": "chant" },
-  // 🛑 全部關閉
   { "time": 212263, "text": "", "type": "ember_stop" },
   { "time": 212263, "text": "", "type": "sunset_stop" }
 ]
