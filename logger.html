@@ -70,7 +70,7 @@
 <script>
     let player;
     let logs = [];
-    const reactionDelay = 0.2; // 社長設定的反應補償
+    const reactionDelay = 200; // 社長設定的反應補償
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
@@ -103,10 +103,13 @@
 
     function captureTime() {
         const rawTime = player.getCurrentTime();
-        const adjustedTime = Math.max(0, rawTime - reactionDelay).toFixed(3);
+    // 🔴 修改：秒轉毫秒並取整數，再減去補償值
+        const msTime = Math.round(rawTime * 1000) - reactionDelay;
+        const adjustedTime = Math.max(0, msTime); 
         const newId = Date.now();
-        
-        logs.push({ id: newId, time: parseFloat(adjustedTime), text: "", type: "chant" });
+    
+    // 🔴 儲存進 logs 的時間現在是整數毫秒
+        logs.push({ id: newId, time: adjustedTime, text: "", type: "chant" });
         logs.sort((a, b) => a.time - b.time);
         
         renderLogs();
@@ -122,14 +125,14 @@
     }
 
     function renderLogs() {
-        const list = document.getElementById('log-list');
-        list.innerHTML = logs.map((log) => `
-            <div class="log-item" data-id="${log.id}">
-                <span>${log.time.toFixed(3)}s</span>
-                <input type="text" value="${log.text}" oninput="updateLogText(${log.id}, this.value)" placeholder="輸入應援詞...">
-                <button class="btn-del" onclick="removeLog(${log.id})" style="background:none; border:none; color:#555; cursor:pointer;">✕</button>
-            </div>
-        `).join('');
+    const list = document.getElementById('log-list');
+    list.innerHTML = logs.map((log) => `
+        <div class="log-item" data-id="${log.id}">
+            <span>${log.time}ms</span> 
+            <input type="text" value="${log.text}" oninput="updateLogText(${log.id}, this.value)" placeholder="輸入應援詞...">
+            <button class="btn-del" onclick="removeLog(${log.id})" style="background:none; border:none; color:#555; cursor:pointer;">✕</button>
+        </div>
+    `).join('');
     }
 
     function updateLogText(id, val) {
@@ -180,3 +183,4 @@
 </body>
 
 </html>
+
