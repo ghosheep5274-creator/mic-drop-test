@@ -92,20 +92,23 @@ if (songSelect) {
     });
 }
 
-// --- 特效指令對照表 ---
-// 將歌詞 JSON 的 type 映射到對應的 JS 啟動/關閉函式
-const effectMap = {
-    "sakura": { start: startSakura, stop: stopSakura },
-    "sunset": { start: showSunset, stop: hideSunset },
-    "ember":  { start: startEmbers, stop: stopEmbers },
-    // 舞台類直接對應 function 並帶入參數
-    "city_1": () => setCityStage(1),
-    "city_2": () => setCityStage(2),
-    "city_off": () => setCityStage(0),
-    "magic_1": () => setMagicStage(1),
-    "magic_2": () => setMagicStage(2),
-    "magic_3": () => setMagicStage(3),
-    "magic_off": () => setMagicStage(0)
+// 將純粹的「特效切換」抽離，不干擾歌詞文字處理
+const effectCommands = {
+    'sakura_start': () => startSakura(),
+    'sakura_stop': () => stopSakura(),
+    'sunset_start': () => showSunset(),
+    'sunset_stop': () => hideSunset(),
+    'ember_start': () => startEmbers(),
+    'ember_stop': () => stopEmbers(),
+    'firework_start': () => startFireworks(),
+    'firework_stop': () => stopFireworks(),
+    'city_1': () => setCityStage(1),
+    'city_2': () => setCityStage(2),
+    'city_off': () => setCityStage(0),
+    'magic_1': () => setMagicStage(1),
+    'magic_2': () => setMagicStage(2),
+    'magic_3': () => setMagicStage(3),
+    'magic_off': () => setMagicStage(0)
 };
 
 
@@ -282,35 +285,11 @@ function updateLoop() {
 function render(lyricObj) {
     if (!lyricBox) return;
 
-    // 🌸 新增：偵測特效指令
-    if (lyricObj.type === 'sakura_start') {
-        startSakura();
-        return; // 這種指令不需要印出文字，直接跳出
+// 🌸 修改處：使用字典快速比對指令，若匹配成功則執行並跳出
+    if (effectCommands[lyricObj.type]) {
+        effectCommands[lyricObj.type]();
+        return; // 這是特效指令，不處理後面的歌詞邏輯
     }
-    if (lyricObj.type === 'sakura_stop') {
-        stopSakura();
-        return;
-    }
-
-    // 🔥 新增：I Need U 特效指令
-    if (lyricObj.type === 'sunset_start') { showSunset(); return; }
-    if (lyricObj.type === 'sunset_stop') { hideSunset(); return; }
-    if (lyricObj.type === 'ember_start') { startEmbers(); return; }
-    if (lyricObj.type === 'ember_stop') { stopEmbers(); return; }
-
-    // 💖 Boy With Luv 指令
-    if (lyricObj.type === 'city_1') { setCityStage(1); return; } // 朦朧
-    if (lyricObj.type === 'city_2') { setCityStage(2); return; } // 清晰霓虹
-    if (lyricObj.type === 'city_off') { setCityStage(0); return; } // 關閉
-    if (lyricObj.type === 'firework_start') { startFireworks(); return; } // 煙火
-    if (lyricObj.type === 'firework_stop') { stopFireworks(); return; }   // 停煙火
-
-    // 💖 magic shop 指令
-    if (lyricObj.type === 'magic_1') { setMagicStage(1); return; } // 夜空
-    if (lyricObj.type === 'magic_2') { setMagicStage(2); return; } // 星星
-    if (lyricObj.type === 'magic_3') { setMagicStage(3); return; } // 流星
-    if (lyricObj.type === 'magic_off') { setMagicStage(0); return; } // 關閉
-
     
     // 處理特殊 Type 樣式
     if (lyricObj.type === 'warning') {
@@ -854,6 +833,7 @@ function clearMagicEffects() {
     setMagicStage(0);
     stopMeteors();
 }
+
 
 
 
