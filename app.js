@@ -607,39 +607,40 @@ function initCity() {
     document.body.insertBefore(cityContainer, document.body.firstChild);
     document.body.insertBefore(overlay, document.body.firstChild);
 
-    // 🏗️ 房子數量減少 (因為變寬了)，大約 15~20 棟就夠填滿畫面
+    // 🏗️ 調整房子數量：因為房子要加寬，所以數量不用太多 (約 20 棟)
     for (let i = 0; i < 20; i++) {
         const b = document.createElement('div');
         b.classList.add('building');
         
-        // 1. 高度：拉高一點，更有大樓感 (20vh ~ 60vh)
-        b.style.height = (Math.random() * 40 + 20) + 'vh'; 
+        // 1. 房屋高度縮減 (原本 20~60vh -> 改為 15~40vh)
+        b.style.height = (Math.random() * 25 + 15) + 'vh'; 
         
-        // 2. 寬度：加寬！ (6% ~ 10%) -> 原本是 3~6%
-        b.style.width = (Math.random() * 4 + 6) + '%';
+        // 2. 房屋寬度加寬 (原本 3~6% -> 改為 5~9%)
+        b.style.width = (Math.random() * 4 + 5) + '%';
         
         // 3. 窗戶生成邏輯
-        const windowCount = Math.floor(Math.random() * 5) + 3; // 每棟 3~7 個窗戶
+        const windowCount = Math.floor(Math.random() * 4) + 2; // 每棟 2~5 個窗戶組
 
         for (let j = 0; j < windowCount; j++) {
             const w = document.createElement('div');
             w.classList.add('city-window');
             
-            // 窗戶寬度 (佔建築寬度的 40% ~ 70%)
-            w.style.width = (Math.random() * 30 + 40) + '%';
-            // 窗戶水平置中微調
-            w.style.left = (Math.random() * 20 + 20) + '%';
+            // 窗戶寬度 (因為要是田字，不能太寬，約佔建築的 30%~50%)
+            w.style.width = (Math.random() * 20 + 30) + '%';
+            
+            // 隨機水平位置
+            w.style.left = (Math.random() * 40 + 15) + '%';
 
-            // 🔥 關鍵：窗戶位置分佈 (80% 在上層，20% 隨機)
+            // 4. 維持窗戶在上層邏輯 (80% 在上層)
             let topPos;
-            const probability = Math.random(); // 擲骰子 0.0 ~ 1.0
+            const probability = Math.random(); 
 
             if (probability < 0.8) {
-                // 🎯 80% 機率：集中在上層 1/5 ~ 1/6 區域 (約 5% ~ 20% 的位置)
+                // 集中在上層 1/5 區域 (約 5% ~ 20% 的位置)
                 topPos = (Math.random() * 15 + 5); 
             } else {
-                // 🎲 20% 機率：散落在剩下的大樓身體 (25% ~ 90% 的位置)
-                topPos = (Math.random() * 65 + 25);
+                // 散落在下方 (25% ~ 80% 的位置)
+                topPos = (Math.random() * 55 + 25);
             }
 
             w.style.top = topPos + '%';
@@ -649,7 +650,6 @@ function initCity() {
         cityContainer.appendChild(b);
     }
 }
-
 // 設定舞台階段 (0=關閉, 1=朦朧, 2=霓虹)
 function setCityStage(stage) {
     initCity(); // 確保城市存在
@@ -723,6 +723,7 @@ function clearCityEffects() {
     // 移除殘留粒子
     document.querySelectorAll('.firework-particle').forEach(el => el.remove());
 }
+
 
 
 
