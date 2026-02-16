@@ -413,6 +413,7 @@ function finishGame() {
     stopSakura();
     clearAllEffects(); // 👈 歌曲結束也清空
     clearCityEffects(); // 💖 新增這行
+    clearMagicEffects();  // 🔴 補上這行：清除魔法星空
     
     // 延遲後回首頁
     setTimeout(() => {
@@ -437,6 +438,7 @@ function resetToTitle() {
     clearSakura();
     clearAllEffects(); // 👈 改用這個大掃除函式
     clearCityEffects(); // 💖 新增這行
+    clearMagicEffects(); // 🔴 補上這行：清除魔法星空
     updatePauseButton(false);
 }
 
@@ -835,6 +837,7 @@ function clearMagicEffects() {
     setMagicStage(0);
     stopMeteors();
 }
+
 
 
 
