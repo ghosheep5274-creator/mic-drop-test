@@ -35,5 +35,11 @@ const songLibrary = {
         videoId: "CP-Qh3KNTSQ",
         bpm: 75,
         file: "lyrics/magic_shop.json"
+    },
+    "idol": {
+        title: "🌠 IDOL",
+        videoId: "9otLVWZWBwc",
+        bpm: 63,
+        file: "lyrics/idol.json"
     }
 };
