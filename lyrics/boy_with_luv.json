@@ -14,6 +14,7 @@
   { "time": 30257, "text": "Oh yeah Oh yeah-④", "type": "sing" },
   { "time": 46079, "text": "Your 1", "type": "sing" },
   { "time": 47073, "text": "Your 2", "type": "sing" },
+  { "time": 47982, "text": "", "type": "city_1" },
   { "time": 53971, "text": "(Geu-ttae ni-ga nae-ge jwot-deon du nal-gae-ro)", "type": "sing" },
   { "time": 64736, "text": "Oh my my my-①", "type": "sing" },
   { "time": 66218, "text": "Oh my my my-②", "type": "sing" },
@@ -38,6 +39,7 @@
   { "time": 121844, "text": "(no way)-①", "type": "sing" },
   { "time": 123575, "text": "(no way)-②", "type": "sing" },
   { "time": 133829, "text": "(Geu-ttae ni-ga nae-ge jwot-deon du nal-gae-ro)", "type": "sing" },
+  { "time": 143981, "text": "", "type": "city_2" },
   { "time": 144741, "text": "Oh my my my-①", "type": "sing" },
   { "time": 146278, "text": "Oh my my my-②", "type": "sing" },
   { "time": 152718, "text": "Oh my my my-③", "type": "sing" },
@@ -50,6 +52,7 @@
   { "time": 169027, "text": "(BTS)-⑥", "type": "chant" },
   { "time": 171986, "text": "(BTS)-⑦", "type": "chant" },
   { "time": 173009, "text": "(BTS)-⑧", "type": "chant" },
+  { "time": 192300, "text": "", "type": "firework_start" },
   { "time": 192711, "text": "Oh my my my-①", "type": "sing" },
   { "time": 194224, "text": "Oh my my my-②", "type": "sing" },
   { "time": 200721, "text": "Oh my my my-③", "type": "sing" },
@@ -63,5 +66,7 @@
   { "time": 220005, "text": "(BTS)-⑦", "type": "chant" },
   { "time": 221017, "text": "(BTS)-⑧", "type": "chant" },
   { "time": 226608, "text": "scream!", "type": "scream" },
+  { "time": 248000, "text": "", "type": "firework_stop" },
+  { "time": 248000, "text": "", "type": "city_off" },
   { "time": 248075, "text": "", "type": "end" }
 ]
