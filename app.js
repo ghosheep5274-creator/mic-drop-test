@@ -288,6 +288,12 @@ function render(lyricObj) {
     if (lyricObj.type === 'firework_start') { startFireworks(); return; } // 煙火
     if (lyricObj.type === 'firework_stop') { stopFireworks(); return; }   // 停煙火
 
+    // 💖 magic shop 指令
+    if (lyricObj.type === 'magic_1') { setMagicStage(1); return; } // 夜空
+    if (lyricObj.type === 'magic_2') { setMagicStage(2); return; } // 星星
+    if (lyricObj.type === 'magic_3') { setMagicStage(3); return; } // 流星
+    if (lyricObj.type === 'magic_off') { setMagicStage(0); return; } // 關閉
+
     
     // 處理特殊 Type 樣式
     if (lyricObj.type === 'warning') {
@@ -822,4 +828,5 @@ function clearMagicEffects() {
     setMagicStage(0);
     stopMeteors();
 }
+
 
