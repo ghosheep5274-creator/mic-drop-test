@@ -732,9 +732,9 @@ body.magic-stage-1 #magic-sky {
     opacity: 0;
     transform: rotate(45deg); /* 頭朝右下 */
 
-    /* 🔴 修改 4: 加快速度！從 2s 改成 0.8s (瞬間劃過) */
+    /* 🔴 修改 4: 加快速度！ (瞬間劃過) */
     /* 使用 ease-out，讓它「衝出去後稍微減速消失」，更有物理感 */
-    animation: shoot 1.4s ease-out forwards;
+    animation: shoot 2.0s ease-out forwards;
     
     will-change: transform, opacity;
     /* 讓頭部稍微圓潤一點，不要是死板的矩形 */
@@ -774,6 +774,7 @@ body.magic-stage-1 #magic-sky { opacity: 1; }
 body.magic-stage-2 .magic-star {
     animation: twinkle 3s infinite ease-in-out alternate;
 }
+
 
 
 
