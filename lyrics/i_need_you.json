@@ -63,5 +63,6 @@
   { "time": 207680, "text": "BTS!", "type": "chant" },
   { "time": 209164, "text": "BTS!", "type": "chant" },
   { "time": 212263, "text": "", "type": "ember_stop" },
-  { "time": 212263, "text": "", "type": "sunset_stop" }
+  { "time": 212263, "text": "", "type": "sunset_stop" },
+  { "time": 212263, "text": "", "type": "end" }
 ]
