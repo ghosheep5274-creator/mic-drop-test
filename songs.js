@@ -25,7 +25,7 @@ const songLibrary = {
         file: "lyrics/i_need_you.json"
     },
     "boy_with_luv": {
-        title: "💖 Boy with Luv-beta test2",
+        title: "💖 Boy with Luv-beta test3",
         videoId: "dKHsskaD_4s",
         bpm: 60,
         file: "lyrics/boy_with_luv.json"
