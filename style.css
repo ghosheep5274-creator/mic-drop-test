@@ -713,29 +713,53 @@ body.magic-stage-1 #magic-sky {
     50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px #fff; }
 }
 
-/* 3. 流星 (Shooting Star) */
+/* 3. 流星 (Shooting Star) - 真實版 */
 .shooting-star {
     position: absolute;
-    width: 100px; /* 流星長度 */
+    /* 🔴 修改 1: 拉長流星，讓尾巴更明顯 */
+    width: 150px; 
+    /* 🔴 修改 2: 稍微變細一點，讓它看起來更鋒利 */
     height: 2px;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%);
+    
+    /* 🔴 修改 3: 重做漸層 (關鍵！) */
+    /* 0% 是尾巴(透明), 100% 是頭部(最亮) */
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 40%, #ffffff 100%);
+    
+    /* 🔴 新增: 強烈的光暈 (模擬燃燒) */
+    /* 內圈白光，外圈帶一點點藍色的高溫感 */
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 15px rgba(150, 220, 255, 0.4);
+    
     opacity: 0;
-    transform: rotate(45deg); /* 左上往右下飛 */
-    animation: shoot 2s linear forwards;
+    transform: rotate(45deg); /* 頭朝右下 */
+
+    /* 🔴 修改 4: 加快速度！從 2s 改成 0.8s (瞬間劃過) */
+    /* 使用 ease-out，讓它「衝出去後稍微減速消失」，更有物理感 */
+    animation: shoot 0.8s ease-out forwards;
+    
     will-change: transform, opacity;
+    /* 讓頭部稍微圓潤一點，不要是死板的矩形 */
+    border-radius: 50%; 
 }
 
-/* 流星劃過動畫 */
+/* 流星劃過動畫 - 真實版 */
 @keyframes shoot {
     0% {
-        transform: translate(0, 0) rotate(45deg) scale(0.5);
+        /* 起點：稍微縮小，看不見 */
+        transform: translate(0, 0) rotate(45deg) scale(0.8);
         opacity: 0;
     }
-    10% { opacity: 1; } /* 瞬間變亮 */
-    80% { opacity: 1; }
+    10% {
+        /* 瞬間爆亮！ */
+        opacity: 1; 
+    }
+    70% {
+        /* 飛行中途就開始變暗淡 (燃燒殆盡) */
+        opacity: 0.5;
+    }
     100% {
-        /* 往右下飛 800px */
-        transform: translate(800px, 800px) rotate(45deg) scale(1);
+        /* 終點：飛得更遠(增加速度感)，並完全消失 */
+        /* 距離從 800px 增加到 1200px */
+        transform: translate(1200px, 1200px) rotate(45deg) scale(1);
         opacity: 0;
     }
 }
@@ -750,6 +774,7 @@ body.magic-stage-1 #magic-sky { opacity: 1; }
 body.magic-stage-2 .magic-star {
     animation: twinkle 3s infinite ease-in-out alternate;
 }
+
 
 
 
