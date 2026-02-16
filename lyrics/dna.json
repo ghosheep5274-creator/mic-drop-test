@@ -61,5 +61,6 @@
   { "time": 210704, "text": "La la la la la-①", "type": "sing" },
   { "time": 212517, "text": "La la la la la-②", "type": "sing" },
   { "time": 217043, "text": "DNA", "type": "chant" },
-  { "time": 218661, "text": "scream!", "type": "scream" }
+  { "time": 218661, "text": "scream!", "type": "scream" },
+  { "time": 235000, "text": "", "type": "end" }
 ]
