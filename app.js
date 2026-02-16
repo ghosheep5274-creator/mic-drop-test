@@ -532,8 +532,8 @@ function hideSunset() {
 function startEmbers() {
     if (emberInterval) return;
     console.log("🔥 餘燼開始燃燒");
-    // 頻率：每 200ms 產生一顆 (密集一點比較有燃燒感)
-    emberInterval = setInterval(createEmber, 200);
+    // 頻率：每 320ms 產生一顆 (密集一點比較有燃燒感)
+    emberInterval = setInterval(createEmber, 320);
 }
 
 // 停止火星生成
@@ -565,7 +565,7 @@ function createEmber() {
     // 隨機屬性
     const size = Math.random() * 5 + 2 + 'px'; // 大小 2~7px
     const left = Math.random() * 100 + 'vw'; // 水平位置
-    const duration = Math.random() * 4 + 3 + 's'; // 飄升速度 3~7秒
+    const duration = Math.random() * 4 + 5 + 's'; // 飄升速度 3~7秒
     const drift = (Math.random() * 150 - 75) + 'px'; // 左右大幅飄移 (-75px ~ 75px)
 
     ember.style.width = size;
@@ -578,6 +578,7 @@ function createEmber() {
 
     setTimeout(() => { ember.remove(); }, parseFloat(duration) * 1000);
 }
+
 
 
 
