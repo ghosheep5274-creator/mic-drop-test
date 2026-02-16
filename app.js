@@ -614,7 +614,7 @@ function initCity() {
         // 隨機高度 10% ~ 50%
         b.style.height = (Math.random() * 40 + 10) + 'vh'; 
         // 隨機寬度
-        b.style.width = (Math.random() * 3 + 1) + '%';
+        b.style.width = (Math.random() * 4 + 3) + '%';
         cityContainer.appendChild(b);
     }
 }
@@ -692,6 +692,7 @@ function clearCityEffects() {
     // 移除殘留粒子
     document.querySelectorAll('.firework-particle').forEach(el => el.remove());
 }
+
 
 
 
