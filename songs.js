@@ -23,5 +23,11 @@ const songLibrary = {
         videoId: "MUrVHhYMtWo",
         bpm: 79,
         file: "lyrics/i_need_you.json"
+    },
+    "boy_with_luv": {
+        title: "❤️‍🔥 Boy with Luv",
+        videoId: "dKHsskaD_4s",
+        bpm: 60,
+        file: "lyrics/boy_with_luv.json"
     }
 };
