@@ -37,7 +37,7 @@ const songLibrary = {
         file: "lyrics/magic_shop.json"
     },
     "idol": {
-        title: "🌠 IDOL",
+        title: "🎉 IDOL",
         videoId: "9otLVWZWBwc",
         bpm: 63,
         file: "lyrics/idol.json"
