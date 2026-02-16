@@ -579,11 +579,11 @@ input:checked + .slider:before {
 /* 單棟建築物 (由 JS 生成) */
 .building {
     background: #1a0b2e; /* 深紫色建築 */
-    width: 3%; /* 寬度 */
-    margin: 0 1px;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    box-shadow: 0 0 5px rgba(255, 105, 180, 0.2); /* 淡淡粉紅光 */
+    margin: 0 2px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    /* 預設沒有窗戶光 */
+    box-shadow: none;
     transition: all 1s ease;
 }
 
@@ -598,27 +598,35 @@ input:checked + .slider:before {
 }
 
 /* --- 階段 1: 朦朧簡易城市 --- */
-body.city-stage-1 #bwl-city { opacity: 0.6; filter: blur(2px); } /* 建築有點模糊 */
-body.city-stage-1 #bwl-overlay {
-    opacity: 0.4;
-    background: linear-gradient(to bottom, #ffe6f2, #ffb6c1); /* 淺粉霧氣 */
+body.city-stage-1 #bwl-city { opacity: 0.7; filter: blur(3px); } /* 建築有點模糊 */
+body.city-stage-1 .building {
+     box-shadow: 0 0 10px rgba(255, 105, 180, 0.3); /* 淡淡粉紅輪廓光 */
 }
 
-/* --- 階段 2: 清晰霓虹城市 --- */
+/* --- 階段 2: 清晰霓虹城市 (+亮亮黃窗戶!) --- */
 body.city-stage-2 #bwl-city { 
     opacity: 1; 
-    filter: blur(0); /* 變清晰 */
+    filter: blur(0);
 }
 body.city-stage-2 .building {
-    background: #2a0e45; /* 建築變亮一點 */
-    box-shadow: 0 0 15px #ff00ff, 0 0 30px #8A2BE2; /* 強烈霓虹光 */
+    background-color: #351356; /* 建築本體稍微變亮一點的紫 */
+    
+    /* 🪟 窗戶魔法：利用重複漸層畫出黃色光帶 */
+    background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 223, 0, 0.9) 0px,  /* 亮黃光 起始 */
+        rgba(255, 223, 0, 0.9) 4px,  /* 亮黃光 結束 (窗戶高 4px) */
+        transparent 4px,             /* 牆壁隔間 起始 */
+        transparent 10px             /* 牆壁隔間 結束 (樓層間距 6px) */
+    );
+    
+    /* 強烈霓虹光暈 */
+    box-shadow: 
+        0 0 10px #ffd700, /* 內圈加一點金黃光呼應窗戶 */
+        0 0 20px #ff00ff, /* 中圈紫紅霓虹 */
+        0 0 40px #8A2BE2; /* 外圈深紫霓虹 */
 }
-body.city-stage-2 #bwl-overlay {
-    opacity: 0.6;
-    /* 紫紅 + 桃紅 漸層 */
-    background: linear-gradient(135deg, rgba(75,0,130,0.6), rgba(255,20,147,0.5));
-    mix-blend-mode: screen; /* 讓畫面變亮 */
-}
+
 
 /* --- 階段 3: 煙火粒子 --- */
 .firework-particle {
@@ -633,6 +641,7 @@ body.city-stage-2 #bwl-overlay {
     0% { transform: translate(0, 0) scale(1); opacity: 1; }
     100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
+
 
 
 
