@@ -556,6 +556,85 @@ input:checked + .slider:before {
     }
 }
 
+/* ===========================
+   💖 Boy With Luv 特效組：愛之城
+=========================== */
+
+/* 1. 城市天際線容器 */
+#bwl-city {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30vh; /* 佔據畫面下半部 */
+    display: flex;
+    align-items: flex-end; /* 建築物底部對齊 */
+    justify-content: center;
+    z-index: 2; /* 在背景之上 */
+    opacity: 0; /* 預設隱藏 */
+    transition: opacity 2s ease;
+    pointer-events: none;
+}
+
+/* 單棟建築物 (由 JS 生成) */
+.building {
+    background: #1a0b2e; /* 深紫色建築 */
+    width: 3%; /* 寬度 */
+    margin: 0 1px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    box-shadow: 0 0 5px rgba(255, 105, 180, 0.2); /* 淡淡粉紅光 */
+    transition: all 1s ease;
+}
+
+/* 2. 氛圍燈光罩 (Overlay) */
+#bwl-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 2s ease, background 2s ease;
+    pointer-events: none;
+}
+
+/* --- 階段 1: 朦朧簡易城市 --- */
+body.city-stage-1 #bwl-city { opacity: 0.6; filter: blur(2px); } /* 建築有點模糊 */
+body.city-stage-1 #bwl-overlay {
+    opacity: 0.4;
+    background: linear-gradient(to bottom, #ffe6f2, #ffb6c1); /* 淺粉霧氣 */
+}
+
+/* --- 階段 2: 清晰霓虹城市 --- */
+body.city-stage-2 #bwl-city { 
+    opacity: 1; 
+    filter: blur(0); /* 變清晰 */
+}
+body.city-stage-2 .building {
+    background: #2a0e45; /* 建築變亮一點 */
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #8A2BE2; /* 強烈霓虹光 */
+}
+body.city-stage-2 #bwl-overlay {
+    opacity: 0.6;
+    /* 紫紅 + 桃紅 漸層 */
+    background: linear-gradient(135deg, rgba(75,0,130,0.6), rgba(255,20,147,0.5));
+    mix-blend-mode: screen; /* 讓畫面變亮 */
+}
+
+/* --- 階段 3: 煙火粒子 --- */
+.firework-particle {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    z-index: 3;
+    animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+
 
 
 
