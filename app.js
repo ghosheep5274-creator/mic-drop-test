@@ -620,45 +620,28 @@ function initCity() {
         b.style.width = (Math.random() * 6 + 8) + '%';
         
         // --- 窗戶邏輯 (維持之前的田字窗 + 防重疊) ---
-        const windowCount = Math.floor(Math.random() * 3) + 2; 
+        const windowCount = Math.floor(Math.random() * 10) + 5;
         let occupiedPositions = []; 
 
-        for (let j = 0; j < windowCount; j++) {
-            let topPos = -1;
-            let isValid = false;
-            let attempts = 0;
+// 1. 增加窗戶數量：每棟樓生成 5~15 個窗戶，讓大樓看起來更熱鬧
+const windowCount = Math.floor(Math.random() * 10) + 5;
 
-            while (!isValid && attempts < 10) {
-                let candidateTop = Math.random() * 30 + 5; // 上部 1/3
-                let conflict = false;
-                for (let pos of occupiedPositions) {
-                    if (Math.abs(pos - candidateTop) < 10) { // 間距稍微拉大
-                        conflict = true;
-                        break;
-                    }
-                }
-                if (!conflict) {
-                    topPos = candidateTop;
-                    isValid = true;
-                }
-                attempts++;
-            }
+for (let j = 0; j < windowCount; j++) {
+    const w = document.createElement('div');
+    w.classList.add('city-window');
 
-            if (isValid) {
-                const w = document.createElement('div');
-                w.classList.add('city-window');
-                
-                // 窗戶寬度 (配合寬建築，稍微縮小比例，約 30~50%)
-                w.style.width = (Math.random() * 20 + 30) + '%';
-                w.style.left = (Math.random() * 40 + 15) + '%';
-                w.style.top = topPos + '%';
-                
-                b.appendChild(w);
-                occupiedPositions.push(topPos);
-            }
-        }
-        cityContainer.appendChild(b);
-    }
+    // 窗戶寬度 (30% ~ 60%)
+    w.style.width = (Math.random() * 30 + 30) + '%';
+    // 水平位置 (20% ~ 50%)
+    w.style.left = (Math.random() * 30 + 20) + '%';
+
+    // 🔴 關鍵修改：移除所有防重疊和區域限制邏輯
+    // 直接在 5% ~ 90% 的高度範圍內隨機分佈，模擬真實大樓的散落燈光
+    w.style.top = (Math.random() * 85 + 5) + '%';
+
+    b.appendChild(w);
+}
+}
 }
 
 // 設定舞台階段 (0=關閉, 1=朦朧, 2=霓虹)
@@ -734,6 +717,7 @@ function clearCityEffects() {
     // 移除殘留粒子
     document.querySelectorAll('.firework-particle').forEach(el => el.remove());
 }
+
 
 
 
