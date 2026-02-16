@@ -607,49 +607,68 @@ function initCity() {
     document.body.insertBefore(cityContainer, document.body.firstChild);
     document.body.insertBefore(overlay, document.body.firstChild);
 
-    // 🏗️ 調整房子數量：因為房子要加寬，所以數量不用太多 (約 20 棟)
+    // 生成約 20 棟建築物
     for (let i = 0; i < 20; i++) {
         const b = document.createElement('div');
         b.classList.add('building');
         
-        // 1. 房屋高度縮減 (原本 20~60vh -> 改為 15~40vh)
         b.style.height = (Math.random() * 25 + 15) + 'vh'; 
-        
-        // 2. 房屋寬度加寬 (原本 3~6% -> 改為 5~9%)
         b.style.width = (Math.random() * 4 + 5) + '%';
         
-        // 3. 窗戶生成邏輯
-        const windowCount = Math.floor(Math.random() * 4) + 2; // 每棟 2~5 個窗戶組
+        // 🏗️ 窗戶生成邏輯 (防重疊版)
+        const windowCount = Math.floor(Math.random() * 3) + 2; // 每棟 2~4 個窗戶
+        
+        // 用來記錄這棟樓已經生成的窗戶位置 (垂直位置 %)
+        let occupiedPositions = []; 
 
         for (let j = 0; j < windowCount; j++) {
-            const w = document.createElement('div');
-            w.classList.add('city-window');
-            
-            // 窗戶寬度 (因為要是田字，不能太寬，約佔建築的 30%~50%)
-            w.style.width = (Math.random() * 20 + 30) + '%';
-            
-            // 隨機水平位置
-            w.style.left = (Math.random() * 40 + 15) + '%';
+            // 嘗試尋找不重疊的位置 (最多試 10 次，找不到就算了)
+            let topPos = -1;
+            let isValid = false;
+            let attempts = 0;
 
-            // 4. 維持窗戶在上層邏輯 (80% 在上層)
-            let topPos;
-            const probability = Math.random(); 
+            while (!isValid && attempts < 10) {
+                // 🎯 範圍限制：只在頂部 5% ~ 35% (上部 1/3)
+                let candidateTop = Math.random() * 30 + 5; 
+                
+                // 檢查是否跟現有窗戶太近 (距離小於 8%)
+                let conflict = false;
+                for (let pos of occupiedPositions) {
+                    if (Math.abs(pos - candidateTop) < 8) {
+                        conflict = true;
+                        break;
+                    }
+                }
 
-            if (probability < 0.8) {
-                // 集中在上層 1/5 區域 (約 5% ~ 20% 的位置)
-                topPos = (Math.random() * 15 + 5); 
-            } else {
-                // 散落在下方 (25% ~ 80% 的位置)
-                topPos = (Math.random() * 55 + 25);
+                if (!conflict) {
+                    topPos = candidateTop;
+                    isValid = true;
+                }
+                attempts++;
             }
 
-            w.style.top = topPos + '%';
-            b.appendChild(w);
+            // 如果找到有效位置才生成
+            if (isValid) {
+                const w = document.createElement('div');
+                w.classList.add('city-window');
+                
+                // 寬度 40% ~ 70%
+                w.style.width = (Math.random() * 30 + 40) + '%';
+                
+                // 水平居中稍微偏移 (15% ~ 45%)
+                w.style.left = (Math.random() * 30 + 15) + '%';
+                
+                w.style.top = topPos + '%';
+                
+                b.appendChild(w);
+                occupiedPositions.push(topPos); // 記錄位置
+            }
         }
 
         cityContainer.appendChild(b);
     }
 }
+
 // 設定舞台階段 (0=關閉, 1=朦朧, 2=霓虹)
 function setCityStage(stage) {
     initCity(); // 確保城市存在
@@ -723,6 +742,7 @@ function clearCityEffects() {
     // 移除殘留粒子
     document.querySelectorAll('.firework-particle').forEach(el => el.remove());
 }
+
 
 
 
