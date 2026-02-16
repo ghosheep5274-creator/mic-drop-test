@@ -725,15 +725,101 @@ function clearCityEffects() {
 }
 
 
+// ===========================
+// 🔮 Magic Shop Engine
+// ===========================
 
+let meteorInterval = null;
 
+// 初始化魔法天空 (灑星星)
+function initMagicSky() {
+    if (document.getElementById('magic-sky')) return;
 
+    const sky = document.createElement('div');
+    sky.id = 'magic-sky';
+    document.body.insertBefore(sky, document.body.firstChild);
 
+    // ✨ 產生 50 顆星星 (數量少一點，效能比較好)
+    for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.classList.add('magic-star');
+        
+        // 隨機大小 (1px ~ 3px)
+        const size = Math.random() * 2 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
 
+        // 隨機位置
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 80 + '%'; // 不要太下面，留給舞台
 
+        // 隨機動畫延遲 (讓閃爍不同步，看起來才自然)
+        star.style.animationDelay = (Math.random() * 2) + 's';
 
+        sky.appendChild(star);
+    }
+}
 
+// 設定魔法階段
+function setMagicStage(stage) {
+    initMagicSky();
+    
+    // 清除舊狀態
+    document.body.classList.remove('magic-stage-1', 'magic-stage-2', 'magic-stage-3');
+    stopMeteors(); // 切換階段時先停流星
 
+    if (stage === 1) {
+        document.body.classList.add('magic-stage-1'); // 深藍夜空
+        console.log("🔮 Magic: 深淵夜空");
+    } else if (stage === 2) {
+        document.body.classList.add('magic-stage-1', 'magic-stage-2'); // + 星星閃爍
+        console.log("🔮 Magic: 銀河閃爍");
+    } else if (stage === 3) {
+        document.body.classList.add('magic-stage-1', 'magic-stage-2'); // 維持星星
+        startMeteors(); // + 開始丟流星
+        console.log("🔮 Magic: 流星雨");
+    } else {
+        console.log("🔮 Magic: 關閉");
+    }
+}
 
+// --- 流星系統 ---
+function startMeteors() {
+    if (meteorInterval) return;
+    // 每 1.5 秒丟一顆流星 (不要太頻繁，避免卡頓)
+    meteorInterval = setInterval(createMeteor, 1500);
+}
 
+function stopMeteors() {
+    if (meteorInterval) {
+        clearInterval(meteorInterval);
+        meteorInterval = null;
+    }
+}
+
+function createMeteor() {
+    const sky = document.getElementById('magic-sky');
+    if (!sky) return;
+
+    const meteor = document.createElement('div');
+    meteor.classList.add('shooting-star');
+    
+    // 從天頂隨機位置出發
+    // left: -20% ~ 120% (範圍大一點，讓流星可以從畫面外劃進來)
+    meteor.style.left = (Math.random() * 140 - 20) + '%';
+    meteor.style.top = (Math.random() * 50 - 20) + '%'; // 從上方落下
+
+    sky.appendChild(meteor);
+
+    // 動畫結束後 (2秒) 移除元素
+    setTimeout(() => {
+        meteor.remove();
+    }, 2000);
+}
+
+// 清除所有 Magic 特效
+function clearMagicEffects() {
+    setMagicStage(0);
+    stopMeteors();
+}
 
