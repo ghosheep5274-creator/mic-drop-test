@@ -595,8 +595,9 @@ function createEmber() {
 let fireworkInterval = null;
 
 // 初始化城市 (造房子)
+// app.js - [區域 I] 特效引擎
+
 function initCity() {
-    // 防止重複生成
     if (document.getElementById('bwl-city')) return;
 
     const cityContainer = document.createElement('div');
@@ -608,37 +609,41 @@ function initCity() {
     document.body.insertBefore(cityContainer, document.body.firstChild);
     document.body.insertBefore(overlay, document.body.firstChild);
 
-    // 🏗️ 生成約 15 棟寬建築 (互相重疊)
+    // 🏗️ 生成約 15 棟建築
     for (let i = 0; i < 15; i++) {
         const b = document.createElement('div');
         b.classList.add('building');
         
-        // 房屋高度 (15~40vh)
+        // 房屋外觀設定
         b.style.height = (Math.random() * 25 + 15) + 'vh'; 
-        
-        // 房屋寬度 (8~14%) - 比較寬，像大樓
         b.style.width = (Math.random() * 6 + 8) + '%';
         
-        // --- 🪟 窗戶生成邏輯 (自然散落版) ---
+        // --- 🪟 窗戶生成邏輯 (樓層 + 欄位版) ---
         
-        // 隨機數量：每棟 5 ~ 12 個窗戶
-        const windowCount = Math.floor(Math.random() * 8) + 5; 
-
-        for (let j = 0; j < windowCount; j++) {
-            const w = document.createElement('div');
-            w.classList.add('city-window');
+        // 1. 定義樓層：從 5% 高度開始，每隔 8% 一層，蓋到 90%
+        for (let topPos = 5; topPos < 90; topPos += 8) {
             
-            // 1. 寬度隨機：佔建築的 20% ~ 60% (長短不一)
-            w.style.width = (Math.random() * 40 + 20) + '%';
-            
-            // 2. 水平位置隨機：10% ~ 50% (不要太靠邊緣)
-            w.style.left = (Math.random() * 40 + 10) + '%';
-            
-            // 3. 垂直位置隨機：5% ~ 90% (整棟樓都會亮燈！)
-            // 不再限制於上半部，這樣看起來才像有人住的真實大樓
-            w.style.top = (Math.random() * 85 + 5) + '%';
-            
-            b.appendChild(w);
+            // 2. 定義欄位：每層樓有 3 個橫向位置 (左、中、右)
+            // 0=左, 1=中, 2=右
+            for (let col = 0; col < 3; col++) {
+                
+                // 3. 隨機決定這個位置要不要亮燈 (30% 機率亮燈)
+                // 這樣就會有「有的樓層亮2盞、有的亮1盞」的錯落感
+                if (Math.random() > 0.7) { 
+                    const w = document.createElement('div');
+                    w.classList.add('city-window');
+                    
+                    // 🔴 寬度變窄：固定為建築寬度的 20% (原本是 30%~60%)
+                    w.style.width = '20%';
+                    
+                    // 🔴 水平並排：依據欄位決定位置 (左10%, 中40%, 右70%)
+                    w.style.left = (col * 30 + 10) + '%';
+                    
+                    w.style.top = topPos + '%';
+                    
+                    b.appendChild(w);
+                }
+            }
         }
 
         cityContainer.appendChild(b);
@@ -718,6 +723,7 @@ function clearCityEffects() {
     // 移除殘留粒子
     document.querySelectorAll('.firework-particle').forEach(el => el.remove());
 }
+
 
 
 
