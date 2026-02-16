@@ -582,26 +582,22 @@ input:checked + .slider:before {
 
 /* 2. 單棟建築物 (半透明深藍) + 垂直漸層 (頂部透明 -> 底部深色) */
 .building {
-/* 🔴 修改：改成「實心」不透明漸層 (午夜藍 -> 純黑) */
-    /* 這樣重疊時，前面的房子就會蓋住後面的，不會透視 */
-    background: linear-gradient(to bottom, #142850 0%, #000000 100%);
-    
-    /* 🔴 關鍵修改 1：使用負邊距，讓建築物互相「踩」到一點點，消除縫隙 */
-    margin-left: -2%; 
-    
-    /* 🔴 關鍵修改 2：利用右側陰影來區分前後，而不是用邊框線 */
-    /* 這樣看起來會有立體層次，但不會有一條一條的死板線條 */
-    box-shadow: 4px 0 8px rgba(0, 0, 0, 0.8);
-    
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    position: relative; 
+    /* 🔴 關鍵修改：改成垂直漸層 (深藍 -> 純黑) */
+    /* 這會讓建築物有「受光面」和「背光面」，看起來更立體 */
+    background: linear-gradient(to bottom, #1a237e 0%, #000000 80%);
+
+    margin-left: -2%;
+    /* 稍微加強一點陰影，強調前後關係 */
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.9);
+
+    border-top-left-radius: 4px; /* 稍微加大圓角 */
+    border-top-right-radius: 4px;
+    position: relative;
     transition: all 1s ease;
     overflow: hidden;
-    
-    /* 讓每一棟建築的層級稍微不同，保證陰影能壓在隔壁棟上面 */
-    z-index: 1; 
+    z-index: 1;
 }
+
 
 /* 讓偶數棟的層級高一點，製造前後錯落感 */
 .building:nth-child(even) {
@@ -613,25 +609,25 @@ input:checked + .slider:before {
 /* 3. 田字窗戶 (加寬十字線 + 半透明) */
 .city-window {
     position: absolute;
-/* 底色透明 (靠漸層畫線條) */
     background-color: transparent;
-    
-    /* 🔴 修改：改成「橫條紋」樣式 (模擬樓層光) */
-    /* 亮黃色線條 (2px) + 透明間隔 (2px) = 現代大樓感 */
+
+    /* 橫條紋樣式維持不變 */
     background-image: repeating-linear-gradient(
         to bottom,
-        rgba(255, 235, 59, 0.7) 0px, 
-        rgba(255, 235, 59, 0.7) 2px, 
-        transparent 2px, 
+        rgba(255, 235, 59, 0.8) 0px,
+        rgba(255, 235, 59, 0.8) 2px,
+        transparent 2px,
         transparent 5px
     );
-    
-    height: 14px; 
+
+    height: 14px;
     border-radius: 1px;
     opacity: 0;
     transition: opacity 0.5s ease;
-/* ✅ 3. 增加內陰影 (Inset)：讓光看起來是從窗戶「裡面」透出來的，增加立體感 */
-    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.3);
+
+    /* 🔴 關鍵修改：加上柔和的黃色光暈 */
+    /* 這會讓窗戶看起來像發光體，而不是貼紙 */
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
 }
 
 /* --- 階段 1: 朦朧模式 --- */
@@ -671,6 +667,7 @@ body.city-stage-2 .city-window {
     0% { transform: translate(0, 0) scale(1); opacity: 1; }
     100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
+
 
 
 
