@@ -108,7 +108,9 @@ const effectCommands = {
     'magic_1': () => setMagicStage(1),
     'magic_2': () => setMagicStage(2),
     'magic_3': () => setMagicStage(3),
-    'magic_off': () => setMagicStage(0)
+    'magic_off': () => setMagicStage(0),
+    'butter_start': () => startButter(),
+    'butter_end': () => stopButter()
 };
 
 
@@ -410,6 +412,7 @@ function finishGame() {
     clearAllEffects(); // 👈 歌曲結束也清空
     clearCityEffects(); // 💖 新增這行
     clearMagicEffects();  // 🔴 補上這行：清除魔法星空
+    clearButterEffects();
     
     // 延遲後回首頁
     setTimeout(() => {
@@ -435,6 +438,7 @@ function resetToTitle() {
     clearAllEffects(); // 👈 改用這個大掃除函式
     clearCityEffects(); // 💖 新增這行
     clearMagicEffects(); // 🔴 補上這行：清除魔法星空
+    clearButterEffects();
     updatePauseButton(false);
 }
 
@@ -836,6 +840,76 @@ function clearMagicEffects() {
 
 
 
+// ===========================
+// 🧈 Butter Melt Engine
+// ===========================
+
+function initButterMelt() {
+    if (document.getElementById('butter-melt-layer')) return;
+
+    // 1. 注入 SVG Gooey 濾鏡定義 (這段看起來很可怕，但照抄就好，它是黏稠效果的核心)
+    const svgFilter = `
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-filter-container">
+      <defs>
+        <filter id="gooey-butter-filter">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="gooey" />
+          <feComposite in="SourceGraphic" in2="gooey" operator="atop"/>
+        </filter>
+      </defs>
+    </svg>`;
+    document.body.insertAdjacentHTML('beforeend', svgFilter);
+
+
+    // 2. 建立奶油層容器
+    const butterLayer = document.createElement('div');
+    butterLayer.id = 'butter-melt-layer';
+
+    // 3. 產生 8~12 個隨機的奶油滴
+    const blobCount = Math.floor(Math.random() * 5) + 8; 
+    for (let i = 0; i < blobCount; i++) {
+        const blob = document.createElement('div');
+        blob.classList.add('butter-blob');
+        
+        // 隨機寬度 (5% ~ 15%)
+        blob.style.width = (Math.random() * 10 + 5) + '%';
+        // 隨機水平位置
+        blob.style.left = (Math.random() * 90) + '%';
+        
+        // 隨機動畫時間 (4s ~ 7s) - 慢一點看起來比較濃稠
+        const duration = Math.random() * 3 + 4;
+        blob.style.animationDuration = duration + 's';
+        
+        // 隨機延遲，錯開滴落時間
+        blob.style.animationDelay = (Math.random() * -duration) + 's';
+
+        butterLayer.appendChild(blob);
+    }
+
+    document.body.insertBefore(butterLayer, document.body.firstChild);
+}
+
+// 開始特效
+function startButter() {
+    initButterMelt();
+    // 使用 setTimeout 確保 transition 能觸發
+    setTimeout(() => {
+        document.body.classList.add('butter-on');
+        console.log("🧈 Butter: 融化開始");
+    }, 10);
+}
+
+// 停止特效
+function stopButter() {
+    document.body.classList.remove('butter-on');
+    console.log("🧈 Butter: 融化結束");
+}
+
+// 清除特效 (用於 finishGame)
+function clearButterEffects() {
+    stopButter();
+    // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
+}
 
 
 
