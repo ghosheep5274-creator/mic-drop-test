@@ -1,5 +1,6 @@
 [
 { "time": 100, "text": "", "type": "sunset_start" },
+{ "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":4168,"text":"BUTTER","type":"chant"},
 {"time":13130,"text":"BTS","type":"chant"},
 {"time":15208,"text":"stunner","type":"chant"},
@@ -33,6 +34,7 @@
 {"time":125492,"text":"BTS!","type":"chant"},
 {"time":126076,"text":"(han bak-ja swi-go)","type":"chant"},
 {"time":126889,"text":"Let's go","type":"chant"},
+{"time": 127371, "text": "", "type": "firework_start" },
 {"time":129703,"text":"BTS!-①","type":"chant"},
 {"time":130688,"text":"BTS!-②","type":"chant"},
 {"time":145611,"text":"(butter)","type":"chant"},
