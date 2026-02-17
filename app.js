@@ -110,7 +110,9 @@ const effectCommands = {
     'magic_3': () => setMagicStage(3),
     'magic_off': () => setMagicStage(0),
     'butter_start': () => startButter(),
-    'butter_end': () => stopButter()
+    'butter_end': () => stopButter(),
+    'dynamite_start': () =>startDynamite(),
+    'dynamite_end': () =>stopDynamite()
 };
 
 
@@ -413,6 +415,7 @@ function finishGame() {
     clearCityEffects(); // 💖 新增這行
     clearMagicEffects();  // 🔴 補上這行：清除魔法星空
     clearButterEffects();
+    clearDynamiteEffects();
     
     // 延遲後回首頁
     setTimeout(() => {
@@ -439,6 +442,7 @@ function resetToTitle() {
     clearCityEffects(); // 💖 新增這行
     clearMagicEffects(); // 🔴 補上這行：清除魔法星空
     clearButterEffects();
+    clearDynamiteEffects();
     updatePauseButton(false);
 }
 
@@ -937,12 +941,77 @@ function clearButterEffects() {
 
 
 
+// app.js - Dynamite 特效引擎
 
+let dynamiteInterval;
 
+function startDynamite() {
+    if (document.getElementById('dynamite-confetti-layer')) return;
 
+    // 1. 建立背景與亮片層
+    const bgLayer = document.createElement('div');
+    bgLayer.id = 'dynamite-bg-layer';
+    document.body.appendChild(bgLayer);
 
+    const confettiLayer = document.createElement('div');
+    confettiLayer.id = 'dynamite-confetti-layer';
+    document.body.appendChild(confettiLayer);
 
+    // 2. 背景色彩循環 (Dynamite 配色)
+    const colors = ['#FF9AA2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA'];
+    let colorIdx = 0;
+    
+    // 啟動背景色循環與亮片生成
+    dynamiteInterval = setInterval(() => {
+        // 更新背景色
+        bgLayer.style.background = colors[colorIdx];
+        colorIdx = (colorIdx + 1) % colors.length;
 
+        // 每次生成 3~5 片碎紙花
+        for (let i = 0; i < 5; i++) {
+            createConfetti(confettiLayer);
+        }
+    }, 1000);
+}
+
+function createConfetti(container) {
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    
+    // 隨機顏色 (粉、黃、藍、綠、紫)
+    const colors = ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#D67BFF'];
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    // 隨機形狀
+    const shapes = ['square', 'circle', 'star'];
+    confetti.classList.add(shapes[Math.floor(Math.random() * shapes.length)]);
+    
+    // 隨機位置與大小
+    confetti.style.left = Math.random() * 100 + '%';
+    const size = Math.random() * 10 + 8 + 'px';
+    confetti.style.width = size;
+    confetti.style.height = size;
+    
+    // 隨機速度 (3s ~ 6s)
+    confetti.style.animationDuration = Math.random() * 3 + 3 + 's';
+    
+    container.appendChild(confetti);
+
+    // 動畫結束後移除
+    confetti.addEventListener('animationend', () => confetti.remove());
+}
+
+function stopDynamite() {
+    clearInterval(dynamiteInterval);
+    document.getElementById('dynamite-bg-layer')?.remove();
+    document.getElementById('dynamite-confetti-layer')?.remove();
+}
+
+// 清除特效 (用於 finishGame)
+function clearDynamiteEffects() {
+    stopDynamite();
+    // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
+}
 
 
 
