@@ -833,10 +833,12 @@ body.magic-stage-2 .magic-star {
     /* 物理動畫：極致的黏滯感 */
     animation: stickySqueeze cubic-bezier(0.7, 0, 0.2, 1) infinite;
 
-    /* 右下角高光 */
-    box-shadow: inset -2px -2px 1px rgba(255, 255, 255, 0.9);
+    /* 🔴 關鍵修正：柔化並縮短高光 */
+    /* 原本：inset -2px -2px 1px rgba(255, 255, 255, 0.9); (太銳利) */
+    /* 修改後：增加模糊(4px)，降低亮度(0.7) */
+    box-shadow: inset -2px -2px 4px rgba(255, 255, 255, 0.7);
     
-    /* 🔴 強制手機 GPU 運算 */
+    /* 強制手機 GPU 運算 */
     transform: translate3d(0,0,0);
 }
 
@@ -874,6 +876,7 @@ body.magic-stage-2 .magic-star {
 }
 
 body.butter-on #butter-wrapper { opacity: 1; }
+
 
 
 
