@@ -779,7 +779,7 @@ body.magic-stage-2 .magic-star {
    🧈 Butter Melt 特效：融化奶油 (最終修正版)
 =========================== */
 
-/* style.css - Butter 特效修正 (油亮版) */
+/* style.css - Butter 特效 (乾淨融合版) */
 
 /* 0. 隱藏的 SVG 濾鏡容器 */
 .svg-filter-container {
@@ -797,79 +797,60 @@ body.magic-stage-2 .magic-star {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.5s;
-    /* 核心魔法：黏稠濾鏡 */
-    filter: url('#gooey-butter-filter');
-}
-
-/* 🔴 通用奶油材質 (頂部 + 水滴都用這個) */
-.butter-texture {
-    position: absolute;
-    /* 改用更鮮豔的奶油黃 (原本 #FFD700 有點暗) */
-    background: #FFDD00; 
     
-    /* ✨ 關鍵修改：加入內發光 (Highlight) 製造油亮感 */
-    /* 左上角亮白光，右下角深黃陰影 -> 製造立體液體感 */
-    box-shadow: 
-        inset 10px 10px 20px rgba(255, 255, 255, 0.6), 
-        inset -5px -10px 10px rgba(218, 165, 32, 0.3);
+    /* 🟡 核心魔法： */
+    /* 1. 用 url filter 把黃色圓球黏成液體 */
+    /* 2. 用 drop-shadow 給「整塊液體」加陰影，而不是給「每個圓球」加 */
+    filter: url('#gooey-butter-filter') drop-shadow(0 10px 10px rgba(0,0,0,0.3));
 }
 
-/* 2. 靜態頂部 (波浪源頭) */
+/* 2. 頂部填滿層 (確保最上面是平的，不會有波浪縫隙) */
+.butter-fill-block {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 10vh; /* 佔據頂部 10% */
+    background: #FFD700; /* BTS Butter 經典黃 */
+}
+
+/* 3. 靜態波浪圓球 (不再有陰影！) */
 .butter-static-drip {
-    /* 繼承上面的材質 */
-    background: #FFDD00;
-    box-shadow: inset 10px 10px 20px rgba(255, 255, 255, 0.6);
-    
-    top: -10vh; /* 往上藏 */
-    border-radius: 50%;
     position: absolute;
+    background: #FFD700; /* 必須跟上面同色 */
+    top: -5vh; 
+    border-radius: 50%;
 }
 
-/* 3. 動態落下的奶油滴 */
+/* 4. 動態落下水滴 (不再有陰影！) */
 .butter-drop {
-    background: #FFDD00;
-    /* 水滴也加上小一點的高光 */
-    box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.7);
-    
     position: absolute;
-    /* 水滴形狀 */
+    background: #FFD700;
+    /* 保持完美的水滴形狀 */
     border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
     transform-origin: center top;
     animation: butterFall linear infinite;
 }
 
-/* 4. 🔴 新增：頂部填滿層 (避免波浪上方有空隙) */
-.butter-fill-block {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 15vh; /* 填滿頂部 */
-    background: #FFDD00;
-    /* 讓它也有光澤 */
-    box-shadow: inset 0 -10px 20px rgba(218, 165, 32, 0.2);
-}
-
-/* 落下動畫 */
+/* 落下動畫 (物理感維持) */
 @keyframes butterFall {
     0% {
-        transform: translateY(0) scaleX(1.2) scaleY(0.6); /* 初始扁平 */
+        transform: translateY(0) scaleX(1.5) scaleY(0.5);
         opacity: 1;
     }
     10% {
-        transform: translateY(5vh) scaleX(1) scaleY(1);
+        transform: translateY(2vh) scaleX(1) scaleY(1);
     }
     40% {
-        /* 拉長牽絲 */
-        transform: translateY(20vh) scaleX(0.7) scaleY(1.5);
+        transform: translateY(15vh) scaleX(0.7) scaleY(1.5); /* 牽絲 */
     }
     100% {
-        /* 掉到底部 */
-        transform: translateY(110vh) scaleX(0.6) scaleY(1.2);
+        transform: translateY(110vh) scaleX(0.5) scaleY(1.2);
         opacity: 0;
     }
 }
 
 /* 開關 */
 body.butter-on #butter-wrapper { opacity: 1; }
+
 
 
