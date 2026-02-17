@@ -847,21 +847,26 @@ function clearMagicEffects() {
 function initButterMelt() {
     if (document.getElementById('butter-wrapper')) return;
 
-    // 1. 注入升級版 SVG 濾鏡 (解決圓圈高光問題)
-    // 🔴 關鍵調整：
-    // stdDeviation="15"：大幅增加模糊度 (之前是10)，讓高光融合。
-    // values="... 25 -11"：大幅增加 Alpha 對比度，把糊掉的邊緣切回來變銳利。
+    // 1. 注入專業級「液態光澤」濾鏡
     const svgFilter = `
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-filter-container">
       <defs>
-        <filter id="gooey-glossy">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
+        <filter id="butter-gloss-filter" color-interpolation-filters="sRGB">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+          
           <feColorMatrix in="blur" mode="matrix" values="
             1 0 0 0 0  
             0 1 0 0 0  
             0 0 1 0 0  
-            0 0 0 25 -11" result="gooey" />
-          <feComposite in="SourceGraphic" in2="gooey" operator="atop"/>
+            0 0 0 20 -9" result="gooey" />
+          
+          <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.8" specularExponent="15" lighting-color="#ffffff" result="specular">
+            <fePointLight x="500" y="-100" z="400" />
+          </feSpecularLighting>
+          
+          <feComposite in="specular" in2="gooey" operator="in" result="specular-cut" />
+          
+          <feComposite in="specular-cut" in2="gooey" operator="over" />
         </filter>
       </defs>
     </svg>`;
@@ -870,49 +875,30 @@ function initButterMelt() {
     const wrapper = document.createElement('div');
     wrapper.id = 'butter-wrapper';
 
-    // 2. 建立頂部實心層 (加上材質類別)
-    const solidTop = document.createElement('div');
-    solidTop.classList.add('butter-solid-top', 'butter-texture');
-    wrapper.appendChild(solidTop);
+    // 2. 建立頂部波浪 (使用 SVG Path 繪製完美的曲線)
+    // d="..." 是一條精心設計的波浪線，絕對平滑
+    const topWave = document.createElement('div');
+    topWave.innerHTML = `
+        <svg class="butter-svg-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="#FFD700" d="M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,181.3C672,192,768,160,864,138.7C960,117,1056,107,1152,112C1248,117,1344,139,1392,149.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+        </svg>
+    `;
+    wrapper.appendChild(topWave);
 
-    // 3. 建立大波浪 (加上材質類別)
-    const screenWidth = window.innerWidth;
-    // 使用較大的圓形，重疊產生波浪
-    const waveCount = Math.floor(screenWidth / 100) + 3; 
-
-    for (let i = 0; i < waveCount; i++) {
-        const wave = document.createElement('div');
-        // 同時加入形狀和材質 class
-        wave.classList.add('butter-thick-wave', 'butter-texture');
-        
-        // 大小約 150px ~ 220px
-        const size = Math.random() * 70 + 150;
-        wave.style.width = size + 'px';
-        wave.style.height = size + 'px';
-        
-        // 緊密排列
-        wave.style.left = (i * 100 - 150) + 'px'; 
-        // 高度微調
-        wave.style.top = (Math.random() * 30 - 10) + 'px'; 
-        
-        wave.style.animationDelay = (Math.random() * -3) + 's';
-        wrapper.appendChild(wave);
-    }
-
-    // 4. 建立水滴 (加上材質類別)
-    for (let i = 0; i < 7; i++) {
+    // 3. 建立水滴 (數量適中)
+    for (let i = 0; i < 8; i++) {
         const drop = document.createElement('div');
-        // 同時加入水滴和材質 class
-        drop.classList.add('butter-drop', 'butter-texture');
+        drop.classList.add('butter-drop');
         
-        // 大小適中
-        const size = Math.random() * 25 + 35;
+        // 隨機大小
+        const size = Math.random() * 30 + 30; // 30~60px
         drop.style.width = size + 'px';
-        drop.style.height = (size * 1.3) + 'px'; // 預設就是長形水滴狀
+        drop.style.height = (size * 1.5) + 'px'; // 拉長一點
 
-        drop.style.left = Math.random() * 90 + 5 + '%';
-        drop.style.top = '5vh'; // 從波浪裡長出來
+        // 隨機位置
+        drop.style.left = Math.random() * 95 + '%';
         
+        // 動畫時間
         const duration = Math.random() * 2 + 3;
         drop.style.animationDuration = duration + 's';
         drop.style.animationDelay = (Math.random() * -5) + 's';
@@ -944,6 +930,7 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
+
 
 
 
