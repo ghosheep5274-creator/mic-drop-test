@@ -1,5 +1,5 @@
 [
-{ "time": 100, "text": "", "type": "sunset_start" },
+{ "time": 100, "text": "", "type": "butter_start" },
 { "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":4168,"text":"BUTTER","type":"chant"},
 {"time":13130,"text":"BTS","type":"chant"},
