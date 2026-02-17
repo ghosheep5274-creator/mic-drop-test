@@ -849,13 +849,10 @@ function clearMagicEffects() {
 function initButterMelt() {
     if (document.getElementById('butter-wrapper')) return;
 
-    // 🔴 1. 移除原本的 SVG Filter 注入程式碼
-    // 手機跑 SVG Filter 會變黑，所以我們直接跳過這一步，改用 CSS box-shadow
-
     const wrapper = document.createElement('div');
     wrapper.id = 'butter-wrapper';
 
-    // 2. 建立頂部波浪 (SVG 形狀維持不變，因為它很圓潤好看)
+    // 1. 建立頂部波浪
     const topWave = document.createElement('div');
     topWave.innerHTML = `
         <svg class="butter-svg-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
@@ -869,17 +866,15 @@ function initButterMelt() {
     `;
     wrapper.appendChild(topWave);
 
-    // 3. 建立水滴 (數量維持 5 滴)
-    const dropPositions = [20, 50, 85]; 
+    // 2. 建立水滴 (🔴 固定只生 3 顆)
+    // 設定左(20%)、中(50%)、右(80%) 三個位置
+    const dropPositions = [20, 50, 80]; 
     
     dropPositions.forEach(pos => {
         createDrop(wrapper, pos);
     });
     
-    // 隨機小水滴
-    for(let i=0; i<2; i++) {
-        createDrop(wrapper, Math.random() * 90 + 5);
-    }
+    // 移除隨機生成小水滴的迴圈，保持畫面乾淨
 
     document.body.insertBefore(wrapper, document.body.firstChild);
 }
@@ -896,7 +891,7 @@ function createDrop(wrapper, leftPos) {
     drop.style.left = leftPos + '%';
     
     // 動畫參數
-    const duration = Math.random() * 1.5 + 3; // 3s ~ 4.5s
+    const duration = Math.random() * 1.5 + 3.5; // 3.5s ~ 5s (稍微慢一點，比較優雅)
     drop.style.animationDuration = duration + 's';
     drop.style.animationDelay = (Math.random() * -4) + 's';
 
@@ -926,6 +921,7 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
+
 
 
 
