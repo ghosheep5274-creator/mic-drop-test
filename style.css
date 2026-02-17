@@ -812,31 +812,51 @@ body.magic-stage-2 .magic-star {
     border-radius: 50%;
 }
 
-/* 3. 動態落下的奶油滴 */
+/* 3. 動態落下的奶油滴 (真實液體版) */
 .butter-drop {
     position: absolute;
-    background: #FFD700; /* 純色！ */
-    border-radius: 50%;
+    background: #FFD700; 
+    
+    /* 🔴 關鍵 1：初始形狀改成「水滴型」，而不是正圓 */
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    
+    /* 設定變形原點在頂部 (這樣拉長時才會像從上面流下來) */
+    transform-origin: center top; 
+    
+    /* 改用 ease-in，模擬重力加速 */
     animation: butterFall linear infinite;
 }
 
-/* 落下動畫：純粹位移，讓濾鏡去處理拉絲效果 */
+/* 🔴 關鍵 2：真實液體滴落物理動畫 */
 @keyframes butterFall {
     0% {
-        transform: translateY(0) scale(1);
+        /* 初始：藏在頂部，壓扁 (還在積聚) */
+        transform: translateY(0) scaleX(1.5) scaleY(0.5);
+        opacity: 1;
     }
-    50% {
-        /* 中途稍微拉長一點點 */
-        transform: translateY(30vh) scale(0.9, 1.1);
+    20% {
+        /* 開始流出：恢復正常大小 */
+        transform: translateY(2vh) scaleX(1) scaleY(1);
+    }
+    40% {
+        /* 重力拉扯：變細、變長 (牽絲感) */
+        transform: translateY(10vh) scaleX(0.7) scaleY(1.8);
+    }
+    60% {
+        /* 斷裂前夕：拉到最長 */
+        transform: translateY(20vh) scaleX(0.5) scaleY(2.2);
     }
     100% {
-        /* 掉到底部消失 */
-        transform: translateY(110vh) scale(0.5);
+        /* 快速落下：變回水滴狀，加速消失 */
+        transform: translateY(110vh) scaleX(0.8) scaleY(1.2);
+        opacity: 0;
     }
 }
+
 
 /* --- 開關控制 --- */
 body.butter-on #butter-wrapper {
     opacity: 1;
 }
+
 
