@@ -849,11 +849,13 @@ function clearMagicEffects() {
 function initButterMelt() {
     if (document.getElementById('butter-wrapper')) return;
 
-    // 1. 注入全新「漫畫硬邊高光」濾鏡
+    // 1. 注入全新「漫畫硬邊高光」濾鏡 (手機範圍修正版)
     const svgFilter = `
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-filter-container">
       <defs>
-        <filter id="butter-cartoon-filter" color-interpolation-filters="sRGB">
+        <filter id="butter-cartoon-filter" color-interpolation-filters="sRGB" 
+                x="-50%" y="-50%" width="200%" height="200%">
+          
           <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
           <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="gooey" />
 
@@ -862,17 +864,26 @@ function initButterMelt() {
           </feSpecularLighting>
 
           <feColorMatrix in="specular-soft" mode="matrix" values="
-            0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 18 -8" result="specular-hard" /> <feComposite in="specular-hard" in2="gooey" operator="in" result="final-highlight" />
+            0 0 0 0 1 
+            0 0 0 0 1 
+            0 0 0 0 1 
+            0 0 0 18 -8" result="specular-hard" />
+
+          <feComposite in="specular-hard" in2="gooey" operator="in" result="final-highlight" />
           <feComposite in="final-highlight" in2="gooey" operator="over" />
         </filter>
       </defs>
     </svg>`;
+    
     document.body.insertAdjacentHTML('beforeend', svgFilter);
 
+    // ... (以下建立 wrapper、topWave、drop 的程式碼維持不變) ...
+    // ... 直接複製原本的剩下的部分 ...
+    
     const wrapper = document.createElement('div');
     wrapper.id = 'butter-wrapper';
 
-    // 2. 建立頂部波浪 (維持貝茲曲線)
+    // 2. 建立頂部波浪
     const topWave = document.createElement('div');
     topWave.innerHTML = `
         <svg class="butter-svg-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
@@ -886,18 +897,10 @@ function initButterMelt() {
     `;
     wrapper.appendChild(topWave);
 
-    // 3. 建立水滴 (🔴 減少數量)
-    // 只保留 3 個主要位置
+    // 3. 建立水滴
     const dropPositions = [20, 50, 85]; 
-    
-    dropPositions.forEach(pos => {
-        createDrop(wrapper, pos);
-    });
-    
-    // 只增加 2 個隨機小水滴
-    for(let i=0; i<2; i++) {
-        createDrop(wrapper, Math.random() * 90 + 5);
-    }
+    dropPositions.forEach(pos => { createDrop(wrapper, pos); });
+    for(let i=0; i<2; i++) { createDrop(wrapper, Math.random() * 90 + 5); }
 
     document.body.insertBefore(wrapper, document.body.firstChild);
 }
@@ -960,6 +963,7 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
+
 
 
 
