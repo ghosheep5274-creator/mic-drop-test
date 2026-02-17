@@ -788,19 +788,39 @@ body.magic-stage-2 .magic-star {
     overflow: hidden;
 }
 
-/* 奶油特效容器 */
+/* 奶油特效容器 (手機修復版) */
 #butter-wrapper {
     position: fixed;
     top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 1;
+    width: 100%; 
+    height: 100%; /* 或者用 height: 100dvh; 確保手機網址列不會擋住 */
+    
+    /* 🔴 修正 1: 提高層級，避免被手機播放器蓋住 */
+    z-index: 9999; 
+    
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.5s;
     
-    /* 應用新的漫畫濾鏡 */
-    /* drop-shadow: 增加一層深色描邊，提升漫畫貼紙感 */
+    /* 🔴 修正 2: 針對 WebKit (Safari/Chrome Mobile) 的前綴 */
+    -webkit-filter: url('#butter-cartoon-filter') drop-shadow(2px 4px 0px rgba(180, 130, 0, 0.4));
     filter: url('#butter-cartoon-filter') drop-shadow(2px 4px 0px rgba(180, 130, 0, 0.4));
+    
+    /* 🔴 修正 3: 強制開啟硬體加速 (這行是救命丹！) */
+    /* 這會騙手機說「這是一個 3D 物件」，手機就會叫醒顯卡來運算 */
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    will-change: opacity, filter;
+}
+
+/* 確保 SVG 容器不會佔空間導致跑版 */
+.svg-filter-container {
+    position: absolute;
+    width: 0; height: 0;
+    overflow: hidden;
+    /* 避免手機選取到 */
+    pointer-events: none;
+    visibility: hidden; 
 }
 
 /* 頂部波浪 SVG */
@@ -858,5 +878,6 @@ body.magic-stage-2 .magic-star {
 }
 
 body.butter-on #butter-wrapper { opacity: 1; }
+
 
 
