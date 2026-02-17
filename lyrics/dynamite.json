@@ -1,5 +1,5 @@
 [
-{ "time": 100, "text": "", "type": "magic_2" },
+{ "time": 100, "text": "", "type": "dynamite_start" },
 { "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":4358,"text":"(BTS!)-①","type":"chant"},
 {"time":8355,"text":"(BTS!)-②","type":"chant"},
