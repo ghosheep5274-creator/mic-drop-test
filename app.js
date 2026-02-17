@@ -847,19 +847,13 @@ function clearMagicEffects() {
 function initButterMelt() {
     if (document.getElementById('butter-wrapper')) return;
 
-    // 🔴 1. 注入 SVG 濾鏡 (修正參數，消除黑邊)
+    // 1. 注入 SVG 濾鏡 (維持高黏著度參數)
     const svgFilter = `
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-filter-container">
       <defs>
         <filter id="gooey-butter-filter">
           <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-          
-          <feColorMatrix in="blur" mode="matrix" values="
-            1 0 0 0 0  
-            0 1 0 0 0  
-            0 0 1 0 0  
-            0 0 0 18 -7" result="gooey" />
-            
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="gooey" />
           <feComposite in="SourceGraphic" in2="gooey" operator="atop"/>
         </filter>
       </defs>
@@ -870,47 +864,48 @@ function initButterMelt() {
     const wrapper = document.createElement('div');
     wrapper.id = 'butter-wrapper';
 
-    // 🔴 3. 建立「頂部填滿層」 (讓上面是實心的)
+    // 3. 建立「頂部實心層」 (解決頂部重疊穿幫問題)
     const fillBlock = document.createElement('div');
     fillBlock.classList.add('butter-fill-block');
     wrapper.appendChild(fillBlock);
 
-    // 4. 建立「波浪邊緣」 (圓球)
+    // 4. 建立「波浪邊緣」
     const screenWidth = window.innerWidth;
-    const blobCount = Math.floor(screenWidth / 60); 
+    // 圓球數量稍微多一點，讓波浪更細緻
+    const blobCount = Math.floor(screenWidth / 50); 
 
     for (let i = 0; i < blobCount + 2; i++) {
         const staticDrip = document.createElement('div');
         staticDrip.classList.add('butter-static-drip');
         
-        // 隨機大小
-        const size = Math.random() * 60 + 100; // 100~160px
+        // 大小隨機
+        const size = Math.random() * 60 + 80; // 80~140px
         staticDrip.style.width = size + 'px';
         staticDrip.style.height = size + 'px';
         
-        // 緊密排列
-        staticDrip.style.left = (i * 60 - 50) + 'px'; 
-        // 讓圓球只露出下半部，製造波浪
-        staticDrip.style.top = '5vh'; 
+        // 排列位置：確保每個圓球緊密連接
+        staticDrip.style.left = (i * 50 - 40) + 'px'; 
+        // 高度：固定在實心層的下緣附近，製造波浪
+        staticDrip.style.top = '2vh'; 
 
         wrapper.appendChild(staticDrip);
     }
 
-    // 5. 建立「油亮水滴」
-    for (let i = 0; i < 12; i++) {
+    // 5. 建立「落下水滴」
+    for (let i = 0; i < 15; i++) {
         const drop = document.createElement('div');
         drop.classList.add('butter-drop');
         
         // 隨機大小
-        const size = Math.random() * 40 + 25;
+        const size = Math.random() * 30 + 20;
         drop.style.width = size + 'px';
         drop.style.height = (size * 1.2) + 'px';
 
         drop.style.left = Math.random() * 100 + '%';
-        drop.style.top = '10vh'; // 從波浪處流出
+        drop.style.top = '5vh'; // 從波浪處流出
         
-        // 動畫時間
-        const duration = Math.random() * 2 + 3; // 3~5秒
+        // 動畫參數
+        const duration = Math.random() * 2 + 2.5; // 2.5~4.5秒
         drop.style.animationDuration = duration + 's';
         drop.style.animationDelay = (Math.random() * -5) + 's';
 
@@ -942,6 +937,7 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
+
 
 
 
