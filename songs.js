@@ -55,7 +55,7 @@ const songLibrary = {
         file: "lyrics/dynamite.json"
      },
     "butter": {
-        title: "🧈 Butter-test",
+        title: "🧈 Butter-test1",
         videoId: "OeEWAgUhlbI",
         bpm: 55,
         file: "lyrics/butter.json"
