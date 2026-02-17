@@ -883,21 +883,23 @@ function createDrop(wrapper, leftPos) {
     const drop = document.createElement('div');
     drop.classList.add('butter-drop');
     
-    // 大小：35px ~ 55px
-    const size = Math.random() * 20 + 35;
+    // 🔴 尺寸修改：縮小 50%
+    // 原本是: Math.random() * 20 + 35; (35~55px)
+    // 現在改: Math.random() * 10 + 18; (18~28px)
+    const size = Math.random() * 10 + 18;
+    
     drop.style.width = size + 'px';
-    drop.style.height = (size * 1.3) + 'px';
+    drop.style.height = (size * 1.3) + 'px'; // 保持長寬比
 
     drop.style.left = leftPos + '%';
     
-    // 動畫參數
-    const duration = Math.random() * 1.5 + 3.5; // 3.5s ~ 5s (稍微慢一點，比較優雅)
+    // 動畫參數維持不變 (或是你可以讓它稍微快一點點，小水滴通常掉比較快，但維持慢速也很有質感)
+    const duration = Math.random() * 1.5 + 3.5; 
     drop.style.animationDuration = duration + 's';
     drop.style.animationDelay = (Math.random() * -4) + 's';
 
     wrapper.appendChild(drop);
 }
-
 
 
 // 開始特效
@@ -921,17 +923,6 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
