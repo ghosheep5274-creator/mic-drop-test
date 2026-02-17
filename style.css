@@ -776,6 +776,67 @@ body.magic-stage-2 .magic-star {
 }
 
 
+/* ===========================
+   🧈 Butter Melt 特效：融化奶油
+=========================== */
+
+/* 0. 隱藏的 SVG 濾鏡容器 (在 JS 中動態加入) */
+.svg-filter-container {
+    position: absolute;
+    width: 0; height: 0;
+    overflow: hidden;
+}
+
+/* 1. 奶油層容器 (上半部) */
+#butter-melt-layer {
+    position: fixed;
+    top: -100%; /* 一開始藏在上面 */
+    left: 0;
+    width: 100%;
+    height: 60%; /* 佔據畫面約上半部 */
+    z-index: 1; /* 在背景之上，歌詞之下 */
+    pointer-events: none;
+    opacity: 0;
+    transition: top 1.5s ease-in-out, opacity 0.8s;
+
+    /* 🟡 核心魔法：應用 Gooey 濾鏡 */
+    filter: url('#gooey-butter-filter');
+    /* 基礎奶油色背景，帶一點透明度 */
+    background-color: rgba(255, 225, 53, 0.85); 
+}
+
+/* 2. 奶油滴 (製造融化往下流的效果) */
+.butter-blob {
+    position: absolute;
+    top: 0;
+    /* 使用與容器相同的奶油色 */
+    background-color: rgba(255, 225, 53, 0.9);
+    border-radius: 0 0 50% 50%; /* 下方圓潤 */
+    animation: meltDown infinite ease-in;
+}
+
+/* 融化動畫 */
+@keyframes meltDown {
+    0% {
+        transform: translateY(0) scaleX(1) scaleY(0.5);
+    }
+    40% {
+        /* 變長並往下流 */
+        transform: translateY(20vh) scaleX(0.8) scaleY(2); 
+    }
+    100% {
+        /* 滴落到最下面並變細消失 */
+        transform: translateY(70vh) scaleX(0.2) scaleY(0.2);
+        opacity: 0;
+    }
+}
+
+/* --- 開關控制 --- */
+/* 當 body 加上 butter-on class 時，特效出現 */
+body.butter-on #butter-melt-layer {
+    top: 0; /* 滑下來蓋住上半部 */
+    opacity: 1;
+}
 
 
 
