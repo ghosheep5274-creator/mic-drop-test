@@ -844,24 +844,26 @@ function clearMagicEffects() {
 // 🧈 Butter Melt Engine
 // ===========================
 
+// app.js - [區域 I] 特效引擎
+
 function initButterMelt() {
     if (document.getElementById('butter-wrapper')) return;
 
-    // 1. 注入專業級「液態光澤」濾鏡
+    // 1. 注入「亮面液態」濾鏡
     const svgFilter = `
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-filter-container">
       <defs>
         <filter id="butter-gloss-filter" color-interpolation-filters="sRGB">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
           
           <feColorMatrix in="blur" mode="matrix" values="
             1 0 0 0 0  
             0 1 0 0 0  
             0 0 1 0 0  
-            0 0 0 20 -9" result="gooey" />
+            0 0 0 19 -9" result="gooey" />
           
-          <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.8" specularExponent="15" lighting-color="#ffffff" result="specular">
-            <fePointLight x="500" y="-100" z="400" />
+          <feSpecularLighting in="blur" surfaceScale="6" specularConstant="1.2" specularExponent="20" lighting-color="#ffffff" result="specular">
+            <fePointLight x="200" y="-100" z="300" />
           </feSpecularLighting>
           
           <feComposite in="specular" in2="gooey" operator="in" result="specular-cut" />
@@ -875,38 +877,55 @@ function initButterMelt() {
     const wrapper = document.createElement('div');
     wrapper.id = 'butter-wrapper';
 
-    // 2. 建立頂部波浪 (使用 SVG Path 繪製完美的曲線)
-    // d="..." 是一條精心設計的波浪線，絕對平滑
+    // 2. 建立頂部波浪 (使用新的不規則貝茲曲線)
+    // 這條曲線模擬了自然融化的邊緣，有三個主要的融化垂點
     const topWave = document.createElement('div');
     topWave.innerHTML = `
         <svg class="butter-svg-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="#FFD700" d="M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,181.3C672,192,768,160,864,138.7C960,117,1056,107,1152,112C1248,117,1344,139,1392,149.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+            <path fill="#FFD700" d="M0,0 L1440,0 L1440,100 
+            C1350,180 1250,80 1150,140 
+            C1050,200 950,280 850,220 
+            C750,160 650,220 550,260 
+            C400,320 300,150 200,200 
+            C100,250 50,150 0,120 Z"></path>
         </svg>
     `;
     wrapper.appendChild(topWave);
 
-    // 3. 建立水滴 (數量適中)
-    for (let i = 0; i < 8; i++) {
-        const drop = document.createElement('div');
-        drop.classList.add('butter-drop');
-        
-        // 隨機大小
-        const size = Math.random() * 30 + 30; // 30~60px
-        drop.style.width = size + 'px';
-        drop.style.height = (size * 1.5) + 'px'; // 拉長一點
-
-        // 隨機位置
-        drop.style.left = Math.random() * 95 + '%';
-        
-        // 動畫時間
-        const duration = Math.random() * 2 + 3;
-        drop.style.animationDuration = duration + 's';
-        drop.style.animationDelay = (Math.random() * -5) + 's';
-
-        wrapper.appendChild(drop);
+    // 3. 建立水滴 (垂直落下)
+    // 配合波浪的垂點位置生成水滴，看起來更真實
+    const dropPositions = [15, 38, 60, 85]; // 對應波浪的垂下位置 (%)
+    
+    // 生成主要水滴
+    dropPositions.forEach(pos => {
+        createDrop(wrapper, pos);
+    });
+    
+    // 生成隨機小水滴
+    for(let i=0; i<4; i++) {
+        createDrop(wrapper, Math.random() * 90 + 5);
     }
 
     document.body.insertBefore(wrapper, document.body.firstChild);
+}
+
+function createDrop(wrapper, leftPos) {
+    const drop = document.createElement('div');
+    drop.classList.add('butter-drop');
+    
+    // 大小：30px ~ 50px
+    const size = Math.random() * 20 + 30;
+    drop.style.width = size + 'px';
+    drop.style.height = (size * 1.2) + 'px'; // 預設長寬比
+
+    drop.style.left = leftPos + '%';
+    
+    // 動畫參數
+    const duration = Math.random() * 1.5 + 2.5; // 2.5s ~ 4s
+    drop.style.animationDuration = duration + 's';
+    drop.style.animationDelay = (Math.random() * -3) + 's';
+
+    wrapper.appendChild(drop);
 }
 
 // 開始特效
@@ -930,6 +949,7 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
+
 
 
 
