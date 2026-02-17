@@ -852,11 +852,17 @@ function initButterMelt() {
     const wrapper = document.createElement('div');
     wrapper.id = 'butter-wrapper';
 
-    // 1. 建立頂部波浪
+    // 1. 建立頂部波浪 (包含漸層定義)
     const topWave = document.createElement('div');
     topWave.innerHTML = `
         <svg class="butter-svg-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="#FFD700" d="M0,0 L1440,0 L1440,100 
+            <defs>
+                <linearGradient id="butter-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#FFC107;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <path fill="url(#butter-gradient)" d="M0,0 L1440,0 L1440,100 
             C1350,180 1250,80 1150,140 
             C1050,200 950,280 850,220 
             C750,160 650,220 550,260 
@@ -866,15 +872,12 @@ function initButterMelt() {
     `;
     wrapper.appendChild(topWave);
 
-    // 2. 建立水滴 (🔴 固定只生 3 顆)
-    // 設定左(20%)、中(50%)、右(80%) 三個位置
+    // 2. 建立水滴 (固定 3 顆)
     const dropPositions = [20, 50, 80]; 
     
     dropPositions.forEach(pos => {
         createDrop(wrapper, pos);
     });
-    
-    // 移除隨機生成小水滴的迴圈，保持畫面乾淨
 
     document.body.insertBefore(wrapper, document.body.firstChild);
 }
@@ -883,17 +886,15 @@ function createDrop(wrapper, leftPos) {
     const drop = document.createElement('div');
     drop.classList.add('butter-drop');
     
-    // 🔴 尺寸修改：縮小 50%
-    // 原本是: Math.random() * 20 + 35; (35~55px)
-    // 現在改: Math.random() * 10 + 18; (18~28px)
+    // 🔴 尺寸縮小 50% (18px ~ 28px)
     const size = Math.random() * 10 + 18;
     
     drop.style.width = size + 'px';
-    drop.style.height = (size * 1.3) + 'px'; // 保持長寬比
+    drop.style.height = (size * 1.3) + 'px';
 
     drop.style.left = leftPos + '%';
     
-    // 動畫參數維持不變 (或是你可以讓它稍微快一點點，小水滴通常掉比較快，但維持慢速也很有質感)
+    // 時間稍微錯開，保持優雅的慢速
     const duration = Math.random() * 1.5 + 3.5; 
     drop.style.animationDuration = duration + 's';
     drop.style.animationDelay = (Math.random() * -4) + 's';
@@ -923,6 +924,7 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
+
 
 
 
