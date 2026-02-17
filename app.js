@@ -888,7 +888,7 @@ function initButterMelt() {
     wrapper.appendChild(topWave);
 
     // 3. 建立水滴 (固定 3 顆)
-    const dropPositions = [10, 30, 60]; 
+    const dropPositions = [10, 33, 65]; 
     dropPositions.forEach(pos => { createDrop(wrapper, pos); });
 
     document.body.insertBefore(wrapper, document.body.firstChild);
@@ -933,6 +933,7 @@ function clearButterEffects() {
     stopButter();
     // 如果需要完全移除元素可以寫在這裡，但通常只需要 stop 即可
 }
+
 
 
 
