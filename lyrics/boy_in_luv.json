@@ -1,5 +1,5 @@
 [
-{"time":100,"text":"(Bangtan)-①","type":"wait"},
+{ "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":14361,"text":"(Bangtan)-①","type":"chant"},
 {"time":17279,"text":"(Bangtan)-②","type":"chant"},
 {"time":20173,"text":"(Bangtan)-③","type":"chant"},
@@ -36,5 +36,5 @@
 {"time":214669,"text":"deopchigi jeone","type":"chant"},
 {"time":217465,"text":"nochigi jeone","type":"chant"},
 {"time":224773,"text":"(Bangtan Sonyeondan)","type":"chant"},
-{"time":231182,"text":"end","type":"chant"}
+{"time":231282,"text":"","type":"end"}
 ]
