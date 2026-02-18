@@ -59,5 +59,11 @@ const songLibrary = {
         videoId: "OeEWAgUhlbI",
         bpm: 55,
         file: "lyrics/butter.json"
+     },
+    "permission_to_dance": {
+        title: "🎈💜 Permission To Dance",
+        videoId: "f_ECYkGeWtI",
+        bpm: 55,
+        file: "lyrics/permission_to_dance.json"
     }
 };
