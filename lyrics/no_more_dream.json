@@ -1,4 +1,5 @@
 [
+{ "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":4070,"text":"(mwoni)-①","type":"chant"},
 {"time":6842,"text":"(mwoni)-②","type":"chant"},
 {"time":9723,"text":"(mwoni)-③","type":"chant"},
