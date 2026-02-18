@@ -1,4 +1,6 @@
 [
+{ "time": 100, "text": "", "type": "dynamite_start" },
+{ "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":13171,"text":"Jeon Jung Kook!","type":"chant"},
 {"time":20960,"text":"Kim Nam Joon!","type":"chant"},
 {"time":28601,"text":"Park Ji Min!","type":"chant"},
@@ -27,5 +29,5 @@
 {"time":171475,"text":"And roll in like we’re dancing fools","type":"sing"},
 {"time":187056,"text":"ARMY wa yeong-won-hi","type":"sing"},
 {"time":189706,"text":"permission to dance","type":"sing"},
-{"time":224321,"text":"end","type":"chant"}
+{"time":224321,"text":"","type":"end"}
 ]
