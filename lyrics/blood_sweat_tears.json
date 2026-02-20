@@ -1,4 +1,5 @@
 [
+{ "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":22385,"text":"Kim Nam Joon!","type":"chant"},
 {"time":23684,"text":"Kim Seok Jin!","type":"chant"},
 {"time":24908,"text":"Min Yoon Gi!","type":"chant"},
