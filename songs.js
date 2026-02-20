@@ -77,5 +77,24 @@ const songLibrary = {
         videoId: "hK-d1cM8hT0",
         bpm: 83,
         file: "lyrics/boy_in_luv.json"
+     },
+    "blood_sweat_tears": {
+        title: "🪽 Blood Sweat & Tears",
+        videoId: "lygNcurW8GI",
+        bpm: 93,
+        file: "lyrics/blood_sweat_tears.json"
+     },
+    "fake_love": {
+        title: "🎭 FAKE LOVE",
+        videoId: "Uxthy8aJzGA",
+        bpm: 78,
+        file: "lyrics/fake_love.json"
+    },
+    "run": {
+        title: "👟 RUN",
+        videoId: "yXLwuUMHP3I",
+        bpm: 66.5,
+        file: "lyrics/run.json"
     }
+    
 };
