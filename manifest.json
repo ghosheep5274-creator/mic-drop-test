@@ -1,8 +1,9 @@
 {
   "name": "Purple Fanchant",
-  "short_name": "Borahae",
+  "short_name": "PurpleMIC",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#AB46D2"
 }
+
