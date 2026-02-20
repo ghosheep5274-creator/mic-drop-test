@@ -1,4 +1,5 @@
 [
+{ "time": 500, "text": "Waiting for beat...", "type": "wait" },
 {"time":25970,"text":"(Fake Love)-①","type":"chant"},
 {"time":27595,"text":"(Fake Love)-②","type":"chant"},
 {"time":29108,"text":"(Fake Love)-③","type":"chant"},
