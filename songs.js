@@ -95,6 +95,11 @@ const songLibrary = {
         videoId: "yXLwuUMHP3I",
         bpm: 66.5,
         file: "lyrics/run.json"
+    },
+    "save_me": {
+        title: "🫴 Save ME",
+        videoId: "iDevJV8RCck",
+        bpm: 75,
+        file: "lyrics/save_me.json"
     }
-    
 };
