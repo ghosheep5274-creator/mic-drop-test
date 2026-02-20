@@ -81,7 +81,7 @@ const songLibrary = {
     "blood_sweat_tears": {
         title: "🪽 Blood Sweat & Tears",
         videoId: "lygNcurW8GI",
-        bpm: 93,
+        bpm: 46.5,
         file: "lyrics/blood_sweat_tears.json"
      },
     "fake_love": {
